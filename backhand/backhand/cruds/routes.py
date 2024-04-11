@@ -45,6 +45,24 @@ def remove():
             return str(e)
     return 404
 
+@bp.route('/sort', methods=['PUT'])
+def toggle_sort_flag():
+    if request.method=='PUT':
+        service.toggle_sorting()
+        return {}
+    return 402
+
+@bp.route('/filter', methods=['PUT'])
+def set_filter():
+    if request.method=='PUT':
+        try:
+            filter_key=request.get_json()["name_filter_key"]
+            service.set_name_filter_key(filter_key)
+            return {}
+        except Exception as e:
+            return str(e)
+    return 402
+
 @bp.route('/update/<id>', methods=['PUT'])
 def update(id):
     if request.method=='PUT':
@@ -59,7 +77,14 @@ def update(id):
 @bp.route('/get/sorted/name', methods=['GET'])
 def sort_by_name():
     return service.get_sorted_by_name()
-    
+
+@bp.route('/set_page', methods=['PUT'])
+def set_page():
+    if request.method=='PUT':
+        page_index=int(request.get_json()['index'])
+        page_size=int(request.get_json()['size'])
+        return service.set_page(page_size=page_size, page_index=page_index)
+    return 404
 
 # helper function
 def _bad_request():

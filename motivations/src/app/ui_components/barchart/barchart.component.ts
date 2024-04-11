@@ -19,14 +19,6 @@ export class BarchartComponent {
   public chartOptions: AgChartOptions;
   service=inject(MotivationService)
   motivations:IMotivation[]
-  update(){
-    this.chartOptions = {
-      // Data: Data to be displayed in the chart
-      data: this.motivations,
-      // Series: Defines which chart type and data to use
-      series: [{ type: 'bar', xKey: 'name', yKey: 'strength' }]
-    };
-  }
   constructor() {
     this.service.register(this)
     this.motivations=this.service.getAll()
@@ -38,6 +30,13 @@ export class BarchartComponent {
     };
   }
   notify(){
+    // this.motivations=this.service.getAll()
     this.update()
+  }
+  update(){
+    this.chartOptions = {
+      data: this.motivations,
+      series: [{ type: 'bar', xKey: 'name', yKey: 'strength' }]
+    };
   }
 }

@@ -2,13 +2,13 @@ import {inject, Injectable} from '@angular/core';
 import {IMotivation} from "../domain/imotivation";
 import {InliningMode} from "@angular/compiler-cli/src/ngtsc/typecheck/src/context";
 import {normalizeOptionsMiddleware} from "@angular/cli/src/command-builder/utilities/normalize-options-middleware";
-import {RepoService} from "../repos/repo.service";
+
+import axios from 'axios';
 
 
-
-export class Observable{
-  registeredObjects:Observer[]=[]
-  register(observer:Observer){
+export class MihhObservable{
+  registeredObjects:MihhObserver[]=[]
+  register(observer:MihhObserver){
     this.registeredObjects.push(observer)
   }
   notify(){
@@ -18,7 +18,7 @@ export class Observable{
   }
 }
 
-export class Observer{
+export class MihhObserver{
   notify(){
   };
 }
@@ -26,97 +26,94 @@ export class Observer{
 @Injectable({
   providedIn: 'root'
 })
-export class MotivationService extends Observable{
-  repo=inject(RepoService)
+export class MotivationService extends MihhObservable{
   filter_name:string=""
+
+  base_url="http://127.0.0.1:5000"
+  get_all_url=this.base_url+"/get/all"
+  get_url=this.base_url+"/get/"
+  remove_url=this.base_url+"/remove"
+  add_url=this.base_url+"/add"
   constructor() {
     super()
+    this.add(2, "salut")
   }
   getAll():IMotivation[]{
-    return this.repo.getAll()
-      //.filter(x=> x.strength>3)
-      // .filter(x=> x.name.match(this.filter_name)!==null)
+    let data:IMotivation[]=[]
+    axios.get(this.get_all_url).then( (response) => {
+      for (let x of response.data)
+        data.push(x)
+      // this.notify()
+    }).catch((error)=>{
+    })
+    return data
   }
-  remove(id:number) {
-    if (this.getAll().find(x=>x.id===id)===undefined)
-      throw new Error("Number not found")
-    this.repo.remove(id)
-    this.notify()
+  remove(remove_id:number) {
+    console.log(remove_id)
+    let notify=()=>{this.notify(); console.log("remove"+remove_id)} 
+    axios.delete(this.remove_url,
+      {
+        data: {
+          "id":remove_id
+        }
+      }
+    ).then((response)=>{
+      console.log(response)
+      notify()
+    })
   }
   getById(id:number):IMotivation{
-    let searchResult=this.repo.getAll().find((x: { id: number; })=>x.id===id)
-    if (searchResult===undefined)
-      throw new Error("Argument not in thing");
-    return searchResult
-  }
-  lastId=10
-  getNewId(){
-    return this.lastId++
-  }
-  validStrength(strength:number){
-    return (strength>=0 && strength<=5)
-  }
-  valid(strength:number, name:string){
-    return this.validStrength(strength) && this.repo.getAll().find(x=>x.name===name)===undefined
-  }
-  add(strength:number, name:string){
-    if (!this.valid(strength, name))
-      throw new Error(`Make sure that the introduced motivation:
-          - has 0<=strength<=5
-          - its name is unique
-        `)
-    this.repo.add({
-      id:this.getNewId(),
-      name:name,
-      strength:strength
+    let data:IMotivation={
+      name:"s",
+      id:0,
+      strength:1
+    }
+    axios.get(this.get_url+'/'+id).then( (response) => {
+      data=response.data
+    }).then(()=>{
+      this.notify()
+    }).catch((error)=>{
     })
-    this.notify()
+    return data
+  }
+  add(strength_:number, name_:string){
+    let notify=this.notify
+    axios.post(this.add_url, {
+      id:2,
+      name:name_,
+      strength: strength_
+    }).then(function (response) {
+      console.log(response);
+      notify()
+    }).catch(function (error) {
+      console.log(error);
+    });
   }
   update(id:number, strength:number, name:string){
-    let motivation=this.getById(id)
-    if (!this.validStrength(strength))
-      throw new Error(`Make sure that that the new motivation:
-          - has 0<=strength<=5
-          - its name is unique
-        `)
-    motivation.name=name ;
-    motivation.strength=strength;
     this.notify()
   }
-  sortType:Boolean=true
   sort(){
-    if (this.sortType)
-      this.repo.getAll().sort((a,b) => {
-        if (a.strength<b.strength)
-          return -1
-        if (a.strength>b.strength)
-          return 1
-        return 0
-      })
-    else
-      this.repo.getAll().sort((a,b) => {
-        if (a.strength<b.strength)
-          return 2
-        if (a.strength>b.strength)
-          return -2
-        return 0
-      })
-    this.sortType=!this.sortType
-    this.notify()
+    axios.put(this.base_url+"/sort").then((response)=>{
+      this.notify()
+    })
   }
-  deleted_from_filter:IMotivation[]=[]
   filter(filter_name:string){
-    this.filter_name=filter_name
-    while(this.deleted_from_filter.length){
-      this.repo.getAll().push(this.repo.getAll()[this.repo.getAll().length-1])
-      this.deleted_from_filter.pop()
-    }
-    for (let i=0; i<this.repo.getAll().length; ++i){
-      if(this.repo.getAll()[i].name.match(filter_name)){
-        this.deleted_from_filter.push(this.repo.getAll()[i])
-        this.repo.getAll().splice(i,1)
-      }
-    }
-    this.notify()
+    axios.put(this.base_url+"/filter", {
+      name_filter_key:filter_name
+    }).then((response)=>{
+      this.notify()
+    })
+  }
+  set_page(page_index:number, page_size:number){
+    let page={index:page_index, size:page_size}
+    axios.put(this.base_url + "/set_page", {
+        index: page_index,
+        size: page_size
+    }).then((response) => {
+      response.data;
+      page.index=response.data.index
+      page.size=response.data.size
+    })
+    return page
   }
 }

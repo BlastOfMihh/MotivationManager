@@ -6,6 +6,7 @@ import {Motivationlist} from "../motivationslist/motivationlist";
 import {HomeBarComponent} from "../home-bar/home-bar.component";
 import {BarchartComponent} from "../barchart/barchart.component";
 import {FilterComponent} from "../filter/filter.component";
+import { HttpClientModule } from '@angular/common/http';
 
 // @ts-ignore
 // @ts-ignore
@@ -13,7 +14,7 @@ import {FilterComponent} from "../filter/filter.component";
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, MotivationOperationsComponent, MotivationDisplayComponent, Motivationlist, HomeBarComponent, BarchartComponent, FilterComponent],
+  imports: [RouterOutlet, MotivationOperationsComponent, MotivationDisplayComponent, Motivationlist, HomeBarComponent, BarchartComponent, FilterComponent, HttpClientModule],
   template: `
     <div style="text-align: center">
       <app-home-bar></app-home-bar>

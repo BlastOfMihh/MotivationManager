@@ -1,16 +1,19 @@
 import {Component, inject} from '@angular/core';
 import {CommonModule, NgFor, NgForOf} from "@angular/common";
-import {MotivationService, Observer} from "../../../services/motivation.service";
+import {MotivationService, MihhObserver} from "../../../services/motivation.service";
 import {IMotivation} from "../../../domain/imotivation";
 import {MotivationDisplayComponent} from "../../motiviation-display/motivation-display.component";
 import {min} from "rxjs";
 import {MotivationOperationsComponent} from "../../motivation-operations/motivation-operations.component";
 import {SortButtonComponent} from "../../sort-button/sort-button.component";
 import {FormsModule} from "@angular/forms";
+import { HttpClient } from '@angular/common/http';
+
+
 @Component({
   selector: 'app-paginator',
   standalone: true,
-  imports: [NgFor, CommonModule, NgForOf, MotivationDisplayComponent, MotivationOperationsComponent, SortButtonComponent, FormsModule],
+  imports: [NgFor, CommonModule, NgForOf, MotivationDisplayComponent, MotivationOperationsComponent, SortButtonComponent, FormsModule ],
   template: `
     <div class="paginator">
       <app-sort-button></app-sort-button>
@@ -27,7 +30,7 @@ import {FormsModule} from "@angular/forms";
   `,
   styleUrl: './paginator.component.css'
 })
-export class PaginatorComponent implements Observer{
+export class PaginatorComponent implements MihhObserver{
   service:MotivationService=inject(MotivationService)
   startIndex:number=0
   pageSize:number=4
@@ -38,56 +41,30 @@ export class PaginatorComponent implements Observer{
   pageSizes:number[]=[]
 
   updatePageSize(){
-    this.startIndex=0
-    this.currentPageIndex=1
-    this.totalPageIndex=1
     this.updateCurrentElements()
   }
   notify() {
     this.updateCurrentElements()
-    if (this.motivations.length%this.pageSize===0)
-      this.turnBackPage()
-  }
-
-  updateCurrentElements(){
-    //this.motivations=this.service.getAll()
-
-    while (this.pageSizes.length>0)
-      this.pageSizes.pop()
-    for (let i=1; i<=this.motivations.length; ++i)
-      this.pageSizes.push(i)
-    //page sizes
-
-
-    while(this.currentElements.length>0)
-      this.currentElements.pop()
-    for (let i=this.startIndex; i<Math.min(this.startIndex+this.pageSize, this.motivations.length) ; ++i)
-      this.currentElements.push(this.motivations[i])
-    this.totalPageIndex=Math.ceil(this.motivations.length/this.pageSize)
-   // if (this.motivations.length%this.pageSize==0)
-   //   this.totalPageIndex++
   }
   turnPage(){
-    if (this.startIndex + this.pageSize -1 >=this.motivations.length-1){
-      return
-    }
-    this.startIndex+=this.pageSize
-    this.currentPageIndex++
+    ++this.currentPageIndex
     this.updateCurrentElements()
   }
   turnBackPage(){
-    if (this.currentPageIndex-1<=0)
-      return
-    this.currentPageIndex--
-    this.startIndex-=this.pageSize
+    --this.currentPageIndex
     this.updateCurrentElements()
   }
+  updateCurrentElements(){
+    let page=this.service.set_page(this.currentPageIndex, this.pageSize)
+    this.currentPageIndex=page.index
+    this.pageSize=page.size
+    console.log("updating the pagination", this.currentPageIndex ,this.pageSize)
+    this.currentElements=this.service.getAll()
+  }
   constructor() {
-    this.currentElements=this.motivations.slice(this.startIndex, this.startIndex+this.pageSize-1)
-    this.updateCurrentElements()
+    this.currentElements=this.service.getAll()
     this.service.register(this)
-    for (let i=1; i<=this.motivations.length; ++i)
-      this.pageSizes.push(i)
+    this.updateCurrentElements()
   }
 
 }
