@@ -1,6 +1,6 @@
 import {Component, inject, Input} from '@angular/core';
 import {IMotivation} from "../../domain/imotivation";
-import {MotivationService} from "../../services/motivation.service";
+import {MihhObservable, MihhObserver, MotivationService} from "../../services/motivation.service";
 import {FormsModule} from "@angular/forms";
 import {ActivatedRoute} from "@angular/router";
 
@@ -19,7 +19,7 @@ import {ActivatedRoute} from "@angular/router";
   `,
   styleUrl: './update.component.css'
 })
-export class UpdateComponent {
+export class UpdateComponent implements MihhObserver{
   //@Input()motivation!:IMotivation
   motivation:IMotivation={strength:0.2, id:-1, name:'lame'}
   route: ActivatedRoute = inject(ActivatedRoute);
@@ -27,6 +27,7 @@ export class UpdateComponent {
   motivationId:number
   constructor(){
     // @ts-ignore
+    this.service.register(this)
     this.motivationId=Number(this.route.snapshot.params['id']);
     if(isNaN(this.motivationId))
       this.motivationId=0
@@ -34,6 +35,9 @@ export class UpdateComponent {
 
     this.motivation.name=currentMotivation.name
     this.motivation.strength=currentMotivation.strength
+  }
+  notify(){
+
   }
   update(){
     try {

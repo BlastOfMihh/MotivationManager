@@ -9,9 +9,7 @@ import {IMotivation} from "../../domain/imotivation";
   selector: 'app-barchart',
   standalone: true,
   imports: [AgChartsAngular],
-  template:`<ag-charts-angular
-    style="height: 100%"
-    [options]="chartOptions">
+  template:`<ag-charts-angular style="height: 50%" [options]="chartOptions">
    </ag-charts-angular>`,
   styleUrl: './barchart.component.css'
 })
@@ -23,9 +21,7 @@ export class BarchartComponent {
     this.service.register(this)
     this.motivations=this.service.getAll()
     this.chartOptions = {
-      // Data: Data to be displayed in the chart
       data: this.motivations,
-      // Series: Defines which chart type and data to use
       series: [{ type: 'bar', xKey: 'name', yKey: 'strength' }]
     };
   }
@@ -33,10 +29,16 @@ export class BarchartComponent {
     // this.motivations=this.service.getAll()
     this.update()
   }
-  update(){
+  async update(){
+    // let updated_data=this.service.getAll()
+    // while(this.motivations.length>0)
+      // this.motivations.pop()
+    // for (let x of updated_data)
+    // this.motivations.push(updated_data[0])
     this.chartOptions = {
       data: this.motivations,
       series: [{ type: 'bar', xKey: 'name', yKey: 'strength' }]
     };
+    this.motivations=this.service.getAll()
   }
 }

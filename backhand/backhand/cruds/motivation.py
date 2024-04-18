@@ -1,6 +1,14 @@
-class Motivation():
-    def __init__(self, id:int, name:str, strength:float):
-        self.id=id
+from backhand import db
+
+class Motivation(db.Model):
+    __tablename__='motivations'
+
+    _id=db.Column(db.Integer, primary_key=True)
+    name=db.Column(db.Text, nullable=False)
+    strength=db.Column(db.Integer, nullable=False)
+
+
+    def __init__(self, id, name:str, strength:float):
         self.name=name
         self.strength=strength
     
@@ -9,10 +17,11 @@ class Motivation():
         return (motivation.strength<=5 and motivation.strength>=0)
     
     def to_dict(self):
+        return {"id" : self._id, "name": self.name, "strength": self.strength}
         return vars(self)
 
     def __repr__(self) -> str:
-        return f"Motivation(id={self.id}, name={self.name}, strength={self.strength})"
+        return f"Motivation(id={self._id}, name={self.name}, strength={self.strength})"
     
     @classmethod
     def from_dict(cls, data):

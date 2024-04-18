@@ -8,16 +8,22 @@ import {AddMotivationComponent} from "../add-motivation/add-motivation.component
 import {RouterLink} from "@angular/router";
 import {PaginatorComponent} from "../pagination/paginator/paginator.component";
 import {FilterComponent} from "../filter/filter.component";
+import { SortButtonComponent } from '../sort-button/sort-button.component';
 
 @Component({
   selector: 'app-motivationslist',
   standalone: true,
-  imports: [MotivationDisplayComponent, NgFor, MotivationOperationsComponent, AddMotivationComponent, RouterLink, PaginatorComponent, FilterComponent],
+  imports: [MotivationDisplayComponent, NgFor, MotivationOperationsComponent, AddMotivationComponent, RouterLink, PaginatorComponent, FilterComponent, SortButtonComponent],
   template: `
     <a routerLink="/add"> <button> Add </button> </a>
     <br>
     <app-filter> </app-filter>
+    <br>
+    <app-sort-button></app-sort-button>
+    <br>
     <app-paginator></app-paginator>
+    <!-- <a routerLink="/barchart"> <button> Barchart </button> <a> -->
+
 <!--    <div *ngFor="let motivation of motivations">-->
 <!--      <app-motivation-operations [motivation]="motivation"></app-motivation-operations>-->
 <!--    </div>-->

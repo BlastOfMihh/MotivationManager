@@ -36,16 +36,25 @@ export class MotivationService extends MihhObservable{
   add_url=this.base_url+"/add"
   constructor() {
     super()
-    this.add(2, "salut")
   }
   getAll():IMotivation[]{
     let data:IMotivation[]=[]
-    axios.get(this.get_all_url).then( (response) => {
+    axios.get(this.get_all_url)
+    .then( (response) => {
       for (let x of response.data)
         data.push(x)
-      // this.notify()
-    }).catch((error)=>{
     })
+    .catch((error)=>{ })
+    return data
+  }
+  getPage():IMotivation[]{
+    let data:IMotivation[]=[]
+    axios.get(this.base_url+"/get/page")
+    .then( (response) => {
+      for (let x of response.data)
+        data.push(x)
+    })
+    .catch((error)=>{ })
     return data
   }
   remove(remove_id:number) {
@@ -64,16 +73,18 @@ export class MotivationService extends MihhObservable{
   }
   getById(id:number):IMotivation{
     let data:IMotivation={
-      name:"s",
-      id:0,
-      strength:1
+      id:id,
+      name:"_",
+      strength:0
     }
-    axios.get(this.get_url+'/'+id).then( (response) => {
-      data=response.data
-    }).then(()=>{
-      this.notify()
+    axios.get(this.base_url+"/get/"+id).then((response)=>{
+      data.name=response.data.name
+      data.strength=response.data.strength
+      console.log(data)
+      // this.notify()
     }).catch((error)=>{
     })
+    console.log(data)
     return data
   }
   add(strength_:number, name_:string){
@@ -89,8 +100,15 @@ export class MotivationService extends MihhObservable{
       console.log(error);
     });
   }
-  update(id:number, strength:number, name:string){
-    this.notify()
+  update(id_:number, strength_:number, name_:string){
+    axios.put(this.base_url+"/update/"+id_, {
+      id:id_,
+      strength:strength_,
+      name:name_
+    })
+    // axios.post\(this.base_url+"/sort").then((response)=>{
+    //   this.notify()
+    // })
   }
   sort(){
     axios.put(this.base_url+"/sort").then((response)=>{
@@ -104,6 +122,20 @@ export class MotivationService extends MihhObservable{
       this.notify()
     })
   }
+
+  turn_page(){
+    axios.put(this.base_url + "/page/turn")
+    .then((response)=>{
+      this.notify()
+    })
+  }
+  turn_back_page(){
+    axios.put(this.base_url + "/page/turn_back")
+    .then((response)=>{
+      this.notify()
+    })
+  }
+  
   set_page(page_index:number, page_size:number){
     let page={index:page_index, size:page_size}
     axios.put(this.base_url + "/set_page", {
@@ -113,7 +145,27 @@ export class MotivationService extends MihhObservable{
       response.data;
       page.index=response.data.index
       page.size=response.data.size
+      this.notify()
     })
     return page
+  }
+
+  filterStrength(strenght:number){
+    axios.put(this.base_url+"/filter/strength", {
+      strength_key:strenght
+    }).then((response)=>{
+      this.notify()
+    })
+  }
+
+  getStrengths(){
+    let data:number[]=[1, 2, 3]
+    while(data.length>0)
+      data.pop()
+    axios.get(this.base_url+"/get/strengths").then((response)=>{
+      for (let x of response.data)
+        data.push(x)
+    })
+    return data
   }
 }

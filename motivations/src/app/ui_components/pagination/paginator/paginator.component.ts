@@ -16,7 +16,6 @@ import { HttpClient } from '@angular/common/http';
   imports: [NgFor, CommonModule, NgForOf, MotivationDisplayComponent, MotivationOperationsComponent, SortButtonComponent, FormsModule ],
   template: `
     <div class="paginator">
-      <app-sort-button></app-sort-button>
       <div *ngFor="let element of currentElements">
         <app-motivation-operations [motivation]="element" ></app-motivation-operations>
       </div>
@@ -33,38 +32,38 @@ import { HttpClient } from '@angular/common/http';
 export class PaginatorComponent implements MihhObserver{
   service:MotivationService=inject(MotivationService)
   startIndex:number=0
-  pageSize:number=4
+  pageSize:number=3
   currentPageIndex:number=1
-  totalPageIndex:number=1
+  totalPageIndex:number=3
   currentElements:IMotivation[]
   motivations=this.service.getAll()
-  pageSizes:number[]=[]
+  pageSizes:number[]=[1,2,3,4,5,6]
 
   updatePageSize(){
+    this.totalPageIndex=6/this.pageSize
+    this.service.set_page(1,this.pageSize)
     this.updateCurrentElements()
+    // this.
   }
   notify() {
     this.updateCurrentElements()
   }
   turnPage(){
-    ++this.currentPageIndex
+    this.service.turn_page()
     this.updateCurrentElements()
   }
   turnBackPage(){
-    --this.currentPageIndex
+    this.service.turn_back_page()
     this.updateCurrentElements()
   }
   updateCurrentElements(){
-    let page=this.service.set_page(this.currentPageIndex, this.pageSize)
-    this.currentPageIndex=page.index
-    this.pageSize=page.size
-    console.log("updating the pagination", this.currentPageIndex ,this.pageSize)
-    this.currentElements=this.service.getAll()
+    this.currentElements=this.service.getPage()
   }
+
   constructor() {
-    this.currentElements=this.service.getAll()
+    this.currentElements=this.service.getPage()
     this.service.register(this)
-    this.updateCurrentElements()
+    // this.updateCurrentElements()
   }
 
 }

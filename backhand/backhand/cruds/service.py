@@ -1,15 +1,18 @@
 from .repo import Repo
 from .motivation import Motivation
+from .founder import Founder
+from .validator import Validator
 
-class Service():
+class Service:
     def __init__(self, repo:Repo):
         self.xrepo=repo
         self._last_id=0
         self.sorting_flag=False
         self.name_filter_key=""
         self.page_size=3
-        self.page_index=1
-    xrepo=Repo()
+        self.page_index=0
+        self.strenght_filter_flag=False
+        self.strenght_filter_key=5
 
     def _get_last_id(self):
         self._last_id+=1
@@ -45,30 +48,42 @@ class Service():
         if self.sorting_flag:
             all = sorted(all, key=lambda x : x.name)
         all = self.name_filter(all)
-        start_ind=min((self.page_index-1)*self.page_size, len(all)-1)
-        end_ind= min(self.page_index*self.page_size, len(all)-1)
-        all = all[ start_ind : end_ind]
-        print(start_ind, end_ind)
+        if self.strenght_filter_flag:
+            all = self.strenght_filter_(all)
+        return all
+    
+    def get_strenghts(self):
+        return set([motivation.strength for motivation in self.xrepo.get_all()])
+
+    def turn_page(self):
+        print("turn ")
+        self.page_index+=1
+        self.page_index=max(self.page_index, 0)
+
+    def turn_back_page(self):
+        print("turn back ")
+        self.page_index-=1
+        self.page_index=max(self.page_index, 0)
+
+    def get_page(self):
+        all=self.get_all()
+        left_index=(self.page_index)*self.page_size
+        right_index=left_index + self.page_size
+        if left_index>len(all)-1:
+            self.page_index-=1
+            left_index=(self.page_index)*self.page_size
+            right_index=left_index + self.page_size
+        all=all[left_index:right_index]
         return all
 
+
     def set_page(self, page_size, page_index):
-        max_page_size=len(self.get_all())
-        page_size=min(max_page_size, page_size)
-        page_size=max(page_size, 1)
-
-        max_page_index=max_page_size//page_size + 1 if max_page_size%page_size!=0 else 0
-        page_index=max(page_index, 1)
-        page_index=min(page_index, max_page_size)
-
-        self.page_index=page_index
-        self.page_size=page_size
-        return {'index':page_index, 'size':page_size}
+        self.page_size=max(page_size, 1)
+        return {'index':self.page_index, 'size':self.page_size}
 
     def get_all_dict(self):
-        return [x.to_dict() for x in self.get_all()]
-
-    def name_filter(self, all):
-        return list(filter(lambda x : self.name_filter_key in x.name, all))
+        all=self.get_all()
+        return [x.to_dict() for x in all]
 
     def _validate_motivation(self, motivation):
         if not Motivation.is_valid(motivation):
@@ -79,7 +94,7 @@ class Service():
     def add(self, entity_json):
         new_motivation=Motivation.from_dict(entity_json)
         new_motivation.id=self._get_last_id()
-        self._validate_motivation(new_motivation)
+        Validator.validate(new_motivation)
         self.xrepo.add(new_motivation)
         return new_motivation.to_dict()
 
@@ -108,8 +123,37 @@ class Service():
     def set_name_filter_key(self, key):
         self.name_filter_key=key
 
+    def name_filter(self, all):
+        return list(filter(lambda x : self.name_filter_key in x.name, all))
 
+    def set_strenght_filter(self, key):
+        self.strenght_filter_key=key
+        self.strenght_filter_flag=True
 
-    # helper function
-    def _bad_request():
-        pass
+    def strenght_filter_(self, all):
+        return list(filter(lambda x: abs(self.strenght_filter_key - x.strength)<=0.99, all))
+
+    def founder_add(self, motivation_id, name, email):
+        print("adding founder")
+        new_founder=Founder(name, email, motivation_id)
+        self.xrepo.add(new_founder)
+
+    def founder_remove(self, id):
+        print(id)
+        self.xrepo.founder_remove(id)
+
+    def founder_update(self, id , motivation_id, name, email):
+        new_founder=Founder(name, email, motivation_id)
+        self.xrepo.founder_update(id, new_founder)
+
+    def founder_get(self, id):
+        founder = self.xrepo.founder_get(id)
+        return {
+            "name":founder.name,
+            "email":founder.email,
+
+        }
+
+    def founder_get_all(self):
+        return self.xrepo.founder_get_all()
+        
