@@ -35,7 +35,7 @@ export class PaginatorComponent implements MihhObserver{
   pageSize:number=3
   currentPageIndex:number=1
   totalPageIndex:number=3
-  currentElements:IMotivation[]
+  currentElements:IMotivation[]=[]
   motivations=this.service.getAll()
   pageSizes:number[]=[1,2,3,4,5,6]
 
@@ -57,11 +57,15 @@ export class PaginatorComponent implements MihhObserver{
     this.updateCurrentElements()
   }
   updateCurrentElements(){
-    this.currentElements=this.service.getPage()
+    this.service.getPage().then((response)=>{
+      this.currentElements=response
+    })
   }
 
   constructor() {
-    this.currentElements=this.service.getPage()
+    this.service.getPage().then((resopnse)=>{
+      this.currentElements=resopnse
+    })
     this.service.register(this)
     // this.updateCurrentElements()
   }

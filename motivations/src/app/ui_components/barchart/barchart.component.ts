@@ -16,14 +16,20 @@ import {IMotivation} from "../../domain/imotivation";
 export class BarchartComponent {
   public chartOptions: AgChartOptions;
   service=inject(MotivationService)
-  motivations:IMotivation[]
+  motivations:IMotivation[]=[]
   constructor() {
     this.service.register(this)
-    this.motivations=this.service.getAll()
     this.chartOptions = {
       data: this.motivations,
       series: [{ type: 'bar', xKey: 'name', yKey: 'strength' }]
     };
+    this.service.getAll().then((response)=>{
+      this.motivations=response
+      this.chartOptions = {
+        data: this.motivations,
+        series: [{ type: 'bar', xKey: 'name', yKey: 'strength' }]
+      };
+    })
   }
   notify(){
     // this.motivations=this.service.getAll()
@@ -35,10 +41,12 @@ export class BarchartComponent {
       // this.motivations.pop()
     // for (let x of updated_data)
     // this.motivations.push(updated_data[0])
-    this.chartOptions = {
-      data: this.motivations,
-      series: [{ type: 'bar', xKey: 'name', yKey: 'strength' }]
-    };
-    this.motivations=this.service.getAll()
+    this.service.getAll().then((response)=>{
+      this.motivations=response
+      this.chartOptions = {
+        data: this.motivations,
+        series: [{ type: 'bar', xKey: 'name', yKey: 'strength' }]
+      };
+    })
   }
 }

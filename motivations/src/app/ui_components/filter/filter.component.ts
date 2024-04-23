@@ -37,6 +37,8 @@ export class FilterComponent {
     this.service.filterStrength(this.strenghtFilter)
   }
   notify(){
-    this.strenghtOptions=this.service.getStrengths()
+    this.service.getStrengths().then((response)=>{
+      this.strenghtOptions=response
+    })
   }
 }

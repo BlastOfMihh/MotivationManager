@@ -31,10 +31,12 @@ export class UpdateComponent implements MihhObserver{
     this.motivationId=Number(this.route.snapshot.params['id']);
     if(isNaN(this.motivationId))
       this.motivationId=0
-    let currentMotivation=this.service.getById(this.motivationId)
+    this.service.getById(this.motivationId).then((response)=>{
+      let currentMotivation=response
+      this.motivation.name=currentMotivation.name
+      this.motivation.strength=currentMotivation.strength
+    })
 
-    this.motivation.name=currentMotivation.name
-    this.motivation.strength=currentMotivation.strength
   }
   notify(){
 

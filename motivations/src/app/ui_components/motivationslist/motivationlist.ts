@@ -33,7 +33,10 @@ import { SortButtonComponent } from '../sort-button/sort-button.component';
 export class Motivationlist {
   motivations:IMotivation[]
   constructor(service:MotivationService) {
-    this.motivations=service.getAll()
+    this.motivations=[]
+    service.getAll().then((response)=>{
+      this.motivations=response
+    })
   }
 
 }
