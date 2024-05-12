@@ -27,7 +27,9 @@ export class MotivationOperationsComponent implements MihhObserver{
     this.service.register(this)
   }
   remove(){
-    this.service.remove(this.motivation.id)
+    this.service.remove(this.motivation.id).then((response)=>{
+      this.service.notify()
+    })
   }
   notify() {
 

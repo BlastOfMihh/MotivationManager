@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ModuleWithProviders } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import {MotivationOperationsComponent} from "../motivation-operations/motivation-operations.component";
 import {MotivationDisplayComponent} from "../motiviation-display/motivation-display.component";
@@ -7,6 +7,8 @@ import {HomeBarComponent} from "../home-bar/home-bar.component";
 import {BarchartComponent} from "../barchart/barchart.component";
 import {FilterComponent} from "../filter/filter.component";
 import { HttpClientModule } from '@angular/common/http';
+import { NgxWebstorageModule } from 'ngx-webstorage';
+import { BrowserModule } from '@angular/platform-browser';
 
 // @ts-ignore
 // @ts-ignore
@@ -14,7 +16,7 @@ import { HttpClientModule } from '@angular/common/http';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, MotivationOperationsComponent, MotivationDisplayComponent, Motivationlist, HomeBarComponent, BarchartComponent, FilterComponent, HttpClientModule],
+  imports: [RouterOutlet, MotivationOperationsComponent, MotivationDisplayComponent, Motivationlist, HomeBarComponent, BarchartComponent, FilterComponent, HttpClientModule ],
   template: `
     <div style="text-align: center">
       <app-home-bar></app-home-bar>

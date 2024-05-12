@@ -11,6 +11,12 @@ def register_routes(bp, service):
     # service=Service(xrepo)
     # service.add_examples()
 
+    
+    @bp.route('/ping', methods=['GET'])
+    def ping():
+        if request.method=='GET':
+            return "yes"
+
     @bp.route('/get/<id>', methods=['GET'])
     def get(id):
         if request.method=='GET':
@@ -32,7 +38,7 @@ def register_routes(bp, service):
         if request.method=='POST':
             try:
                 motivation_dict = service.add( request.get_json() )
-                return motivation_dict, 201
+                return motivation_dict
             except InvalidMotivation as e:
                 for err in e.args[0]:
                     print(err)

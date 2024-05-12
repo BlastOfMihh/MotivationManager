@@ -100,7 +100,7 @@ class Service:
 
     def remove(self, id):
         if self.xrepo.get(id) is None :
-            raise Exception("Id not found for deletion")
+            raise Exception("Id"+str(id)+" not found for deletion")
         self.xrepo.remove(id)
 
     def update(self, id, entity_json):

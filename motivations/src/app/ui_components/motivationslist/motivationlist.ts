@@ -9,13 +9,16 @@ import {RouterLink} from "@angular/router";
 import {PaginatorComponent} from "../pagination/paginator/paginator.component";
 import {FilterComponent} from "../filter/filter.component";
 import { SortButtonComponent } from '../sort-button/sort-button.component';
+import { NetworkStatusCheckerComponent } from '../../network-status-checker/network-status-checker.component';
 
 @Component({
   selector: 'app-motivationslist',
   standalone: true,
-  imports: [MotivationDisplayComponent, NgFor, MotivationOperationsComponent, AddMotivationComponent, RouterLink, PaginatorComponent, FilterComponent, SortButtonComponent],
+  imports: [NetworkStatusCheckerComponent,MotivationDisplayComponent, NgFor, MotivationOperationsComponent, AddMotivationComponent, RouterLink, PaginatorComponent, FilterComponent, SortButtonComponent],
   template: `
     <a routerLink="/add"> <button> Add </button> </a>
+    <br>
+    <app-network-status-checker> </app-network-status-checker>
     <br>
     <app-filter> </app-filter>
     <br>
