@@ -1,6 +1,9 @@
 from backhand import create_app
-import unittest
 # run_tests()
+from flask import Flask, jsonify, session, request, redirect, url_for
+from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity, get_jwt
+
+
 
 testing=True
 
