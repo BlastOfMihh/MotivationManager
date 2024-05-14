@@ -47,15 +47,11 @@ class Service:
     def get_page(self, index, size, all=None):
         if all is None:
             all=self.get_all()
-        right_index=(index+1)*size-1
-        if right_index>=len(all):
-            right_index=len(all)-1
-        left_index=max(0, right_index-size-1)
-        print("all", all)
-        page=all[left_index:right_index+1]
-        print("all",page)
-        print("left right index",left_index, right_index)
-        return page,left_index//size
+        index=max(index,0)
+        left_index=min(index*size, len(all)//size*size)
+        right_index=min(left_index+size, len(all))
+        page=all[left_index:right_index]
+        return page,left_index//size 
     
     def get_filter_page(self, index, size, name_filter_key=None, strength_filter_key=None, sort_by_name=False):
         def apply_filters_to_page(self, index, size, filters):
@@ -67,16 +63,16 @@ class Service:
             return list(filter(lambda x : name_filter_key in x.name, all))
         def strength_filter(self, all):
             return list(filter(lambda x: abs(strength_filter_key- x.strength)<=0.99, all))
-        def sort_by_name(self, elements):
-            result = sorted(elements, key=lambda x : x.name)
-            return result
+        def sort_by_name_filter(self, elements):
+            return sorted(elements, key=lambda x : x.name)
         filters_list=[]
         if name_filter_key is not None:
             filters_list.append(name_filter)
         if strength_filter_key is not None:
             filters_list.append(strength_filter)
         if sort_by_name:
-            filters_list.append(sort_by_name)
+            print("sorted by name", sort_by_name)
+            filters_list.append(sort_by_name_filter)
         return apply_filters_to_page(self, index, size, filters_list)
 
     def get_all_dict(self):
@@ -110,18 +106,12 @@ class Service:
         self._validate_motivation(new_motivation)
         self.xrepo.add(new_motivation)
         return new_motivation
-    
-
-
-
 
     def founder_add(self, motivation_id, name, email):
-        print("adding founder")
         new_founder=Founder(name, email, motivation_id)
         self.xrepo.add(new_founder)
 
     def founder_remove(self, id):
-        print(id)
         self.xrepo.founder_remove(id)
 
     def founder_update(self, id , motivation_id, name, email):

@@ -71,9 +71,9 @@ def register_routes(bp, service):
             # except Exception as e:
             #     return str(e)
 
-    @bp.route('/page', methods=['GET'])
+    @bp.route('/page', methods=['OPTIONS'])
     def get_page():
-        if request.method=='GET':
+        if request.method=='OPTIONS':
             try:
                 data_json=request.get_json()
                 page_index=int(data_json["index"])
@@ -84,7 +84,10 @@ def register_routes(bp, service):
                 strength_key=None
                 if "strength_key" in data_json.keys():
                     strength_key=int(data_json["strength_key"])
-                sort_by_name = "sort_by_name" in data_json.keys()
+                    if strength_key<0:
+                        strength_key=None
+                if "sort_by_name" in data_json.keys():
+                    sort_by_name = bool(data_json["sort_by_name"])
                 page, actual_index=service.get_filter_page(page_index, page_size, name_key, strength_key, sort_by_name)
                 page=[ x.to_dict() for x in page]
                 return {
