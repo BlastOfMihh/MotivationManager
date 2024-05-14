@@ -10,8 +10,6 @@ def register_routes(bp, service):
     # xrepo=Repo()
     # service=Service(xrepo)
     # service.add_examples()
-
-    
     @bp.route('/ping', methods=['GET'])
     def ping():
         if request.method=='GET':
@@ -62,17 +60,6 @@ def register_routes(bp, service):
             return {}
         return 402
 
-    @bp.route('/filter', methods=['PUT'])
-    def set_filter():
-        if request.method=='PUT':
-            try:
-                filter_key=request.get_json()["name_filter_key"]
-                service.set_name_filter_key(filter_key)
-                return {}
-            except Exception as e:
-                return str(e)
-        return 402
-
     @bp.route('/update/<id>', methods=['PUT'])
     def update(id):
         if request.method=='PUT':
@@ -84,36 +71,28 @@ def register_routes(bp, service):
             # except Exception as e:
             #     return str(e)
 
-    @bp.route('/get/sorted/name', methods=['GET'])
-    def sort_by_name():
-        return service.get_sorted_by_name()
-
-    @bp.route('/set_page', methods=['PUT'])
-    def set_page():
-        if request.method=='PUT':
-            page_index=int(request.get_json()['index'])
-            page_size=int(request.get_json()['size'])
-            return service.set_page(page_size=page_size, page_index=page_index)
-        return 404
-
-    @bp.route('/page/turn', methods=['PUT'])
-    def turn_page():
-        if request.method=='PUT':
-            service.turn_page()
-            return {}
-        return 404
-
-    @bp.route('/get/page', methods=['GET'])
+    @bp.route('/page', methods=['GET'])
     def get_page():
         if request.method=='GET':
-            return [ x.to_dict() for x in service.get_page()]
-        return 404
-
-    @bp.route('/page/turn_back', methods=['PUT'])
-    def turn_back_page():
-        if request.method=='PUT':
-            service.turn_back_page()
-            return {}
+            try:
+                data_json=request.get_json()
+                page_index=int(data_json["index"])
+                page_size=int(data_json["size"])
+                name_key=None
+                if "name_key" in data_json.keys():
+                    name_key=data_json["name_key"]
+                strength_key=None
+                if "strength_key" in data_json.keys():
+                    strength_key=int(data_json["strength_key"])
+                sort_by_name = "sort_by_name" in data_json.keys()
+                page, actual_index=service.get_filter_page(page_index, page_size, name_key, strength_key, sort_by_name)
+                page=[ x.to_dict() for x in page]
+                return {
+                    "elements" : page,
+                    "index": actual_index
+                }
+            except Exception as e:
+                return str(e)
         return 404
 
     @bp.route("/filter/strength", methods=['PUT'])

@@ -7,12 +7,6 @@ class Service:
     def __init__(self, repo:Repo):
         self.xrepo=repo
         self._last_id=0
-        self.sorting_flag=False
-        self.name_filter_key=""
-        self.page_size=3
-        self.page_index=0
-        self.strenght_filter_flag=False
-        self.strenght_filter_key=5
 
     def _get_last_id(self):
         self._last_id+=1
@@ -45,41 +39,45 @@ class Service:
 
     def get_all(self):
         all=self.xrepo.get_all()
-        if self.sorting_flag:
-            all = sorted(all, key=lambda x : x.name)
-        all = self.name_filter(all)
-        if self.strenght_filter_flag:
-            all = self.strenght_filter_(all)
         return all
     
     def get_strenghts(self):
         return set([motivation.strength for motivation in self.xrepo.get_all()])
 
-    def turn_page(self):
-        print("turn ")
-        self.page_index+=1
-        self.page_index=max(self.page_index, 0)
-
-    def turn_back_page(self):
-        print("turn back ")
-        self.page_index-=1
-        self.page_index=max(self.page_index, 0)
-
-    def get_page(self):
-        all=self.get_all()
-        left_index=(self.page_index)*self.page_size
-        right_index=left_index + self.page_size
-        if left_index>len(all)-1:
-            self.page_index-=1
-            left_index=(self.page_index)*self.page_size
-            right_index=left_index + self.page_size
-        all=all[left_index:right_index]
-        return all
-
-
-    def set_page(self, page_size, page_index):
-        self.page_size=max(page_size, 1)
-        return {'index':self.page_index, 'size':self.page_size}
+    def get_page(self, index, size, all=None):
+        if all is None:
+            all=self.get_all()
+        right_index=(index+1)*size-1
+        if right_index>=len(all):
+            right_index=len(all)-1
+        left_index=max(0, right_index-size-1)
+        print("all", all)
+        page=all[left_index:right_index+1]
+        print("all",page)
+        print("left right index",left_index, right_index)
+        return page,left_index//size
+    
+    def get_filter_page(self, index, size, name_filter_key=None, strength_filter_key=None, sort_by_name=False):
+        def apply_filters_to_page(self, index, size, filters):
+            elements=self.get_all()
+            for my_filter in filters:
+                elements=my_filter(self,elements)
+            return self.get_page(index, size, elements)
+        def name_filter(self, all):
+            return list(filter(lambda x : name_filter_key in x.name, all))
+        def strength_filter(self, all):
+            return list(filter(lambda x: abs(strength_filter_key- x.strength)<=0.99, all))
+        def sort_by_name(self, elements):
+            result = sorted(elements, key=lambda x : x.name)
+            return result
+        filters_list=[]
+        if name_filter_key is not None:
+            filters_list.append(name_filter)
+        if strength_filter_key is not None:
+            filters_list.append(strength_filter)
+        if sort_by_name:
+            filters_list.append(sort_by_name)
+        return apply_filters_to_page(self, index, size, filters_list)
 
     def get_all_dict(self):
         all=self.get_all()
@@ -113,25 +111,9 @@ class Service:
         self.xrepo.add(new_motivation)
         return new_motivation
     
-    def get_sorted_by_name(self):
-        result = sorted(self.xrepo.get_all(), key=lambda x : x.name)
-        return [ x.to_dict() for x in result ]
 
-    def toggle_sorting(self):
-        self.sorting_flag=not self.sorting_flag
 
-    def set_name_filter_key(self, key):
-        self.name_filter_key=key
 
-    def name_filter(self, all):
-        return list(filter(lambda x : self.name_filter_key in x.name, all))
-
-    def set_strenght_filter(self, key):
-        self.strenght_filter_key=key
-        self.strenght_filter_flag=True
-
-    def strenght_filter_(self, all):
-        return list(filter(lambda x: abs(self.strenght_filter_key - x.strength)<=0.99, all))
 
     def founder_add(self, motivation_id, name, email):
         print("adding founder")
