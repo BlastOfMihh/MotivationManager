@@ -7,6 +7,7 @@ import { IMotivationService } from './imotivation_service';
 import { MemoryService } from './memory_service';
 import { DualService } from './dual_service';
 import { BEService } from './be_service';
+import { IPage } from '../domain/page';
 
 
 export class MihhObservable{
@@ -57,9 +58,9 @@ export class MotivationService extends MihhObservable implements IMotivationServ
   fetchData(): Boolean {
     throw new Error('Method not implemented.');
   }
-  getPage(): Promise<IMotivation[]> {
+  async getPage(index:number, size:number, name_key:string, strength_key:number, sort_by_name:Boolean): Promise<IPage> {
     return new Promise((resolve, reject)=>{
-      this.getAll().then((response)=>{
+      this.wrapperService.getPage(index,size,name_key,strength_key,sort_by_name).then((response)=>{
         resolve(response)
       }).catch((reason)=>{
         reject(reason)
@@ -69,13 +70,17 @@ export class MotivationService extends MihhObservable implements IMotivationServ
   remove(remove_id: number): Promise<void> {
     return new Promise<void>((accept, reject)=>{
       this.wrapperService.remove(remove_id).then((response)=>{
-        // this.notify()
+        this.notify()
         accept(response)
       })
     })
   }
   getById(id: number): Promise<IMotivation> {
-    throw new Error('Method not implemented.');
+    return new Promise<IMotivation>((accept, reject)=>{
+      this.wrapperService.getById(id).then((response)=>{
+        accept(response)
+      })
+    })
   }
   add(strength_: number, name_: string): Promise<IMotivation> {
     return new Promise<IMotivation>((accept, reject)=>{
@@ -86,7 +91,14 @@ export class MotivationService extends MihhObservable implements IMotivationServ
     })
   }
   update(id_: number, strength_: number, name_: string): Promise<void> {
-    throw new Error('Method not implemented.');
+    return new Promise<void>((accept, reject)=>{
+      this.wrapperService.update(id_, strength_, name_).then((response)=>{
+        this.notify()
+        accept(response)
+      }).catch((reason)=>{
+        reject(reason)
+      })
+    })
   }
   sort(): Promise<void> {
     throw new Error('Method not implemented.');

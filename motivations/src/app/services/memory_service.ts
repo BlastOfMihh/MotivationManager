@@ -1,4 +1,5 @@
 import { IMotivation } from "../domain/imotivation";
+import { IPage } from "../domain/page";
 import { IMotivationService } from "./imotivation_service";
 
 export class MemoryService implements IMotivationService{
@@ -25,8 +26,17 @@ export class MemoryService implements IMotivationService{
   fetchData(): Boolean {
     throw new Error("Data cannot be fetched in memory service")
   }
-  async getPage(): Promise<IMotivation[]> {
-    throw new Error('Method not implemented.');
+  async getPage(index:number, size:number, name_key:string, strength_key:number, sort_by_name:Boolean): Promise<IPage> {
+    return new Promise<IPage>((accept, reject)=>{
+      this.getAll().then((elements)=>{
+        accept( {
+          index:index,
+          elements:elements
+        })
+      }).catch((reason)=>{
+        reject(reason)
+      })
+    })
   }
   async remove(remove_id: number): Promise<void> {
     return new Promise<void>((accept, reject)=>{
@@ -36,7 +46,12 @@ export class MemoryService implements IMotivationService{
     })
   }
   async getById(id: number): Promise<IMotivation> {
-    throw new Error('Method not implemented.');
+    return new Promise<IMotivation>((accept, reject)=>{
+      for (let motivation of this.data)
+        if (motivation.id==id)
+          accept(motivation)
+      reject("motivation not found in memory :[")
+    })
   }
   async addWithId(id_:number, strength_: number, name_: string): Promise<IMotivation> {
     return new Promise<IMotivation>((x,y)=>{
@@ -67,7 +82,14 @@ export class MemoryService implements IMotivationService{
   async update(id_: number, strength_: number, name_: string): Promise<void> {
     // throw new Error('Method not implemented.');
     return new Promise<void>((accept, reject)=>{
-
+      for (let motivation of this.data){
+        if (motivation.id==id_){
+          motivation.strength=strength_
+          motivation.name=name_
+          accept()
+        }
+      }
+      reject()
     })
   }
   async sort(): Promise<void> {

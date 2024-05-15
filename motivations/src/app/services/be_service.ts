@@ -5,6 +5,7 @@ import { inject } from "@angular/core";
 
 import axios from 'axios';
 import { OperationsQueue } from "./operations_queue";
+import { IPage } from "../domain/page";
 
 export class BEService implements IMotivationService{
   filter_name:string=""
@@ -24,7 +25,6 @@ export class BEService implements IMotivationService{
 
   constructor() {
     this.setStatus()
-    this.game_loop()
   }
   setData(): void {
     throw new Error("Method not implemented.");
@@ -76,34 +76,25 @@ export class BEService implements IMotivationService{
             alert("removing operation in be_service")
             this.remove(operation_arguments[0])
             break;
+          case "update":
+            alert("updating operation in be_service")
+            this.update(operation_arguments[0], operation_arguments[1], operation_arguments[2])
+            break;
         } 
       }
     }
     return fetched
   }
-  async sleep(ms:number) {
-    return new Promise(resolve => setTimeout(resolve, ms || 1000));
-  }
-  async game_loop(){
-    while(true){
-      // this.fetchData()
-      await this.sleep(1000)
-    }
-  }
-  // getPage():IMotivation[]{
-  //   let data:IMotivation[]=[]
-  //   axios.get(this.base_url+"/get/page")
-  //   .then( (response) => {
-  //     for (let x of response.data)
-  //       data.push(x)
-  //   })
-  //   .catch((error)=>{ })
-  //   return data
-  // }
-  async getPage(): Promise<IMotivation[]> {
+  async getPage(index:number, size:number, name_key:string, strength_key:number, sort_by_name:Boolean): Promise<IPage> {
     this.setStatus()
     return new Promise((resolve, reject)=>{
-      axios.get(this.base_url+"/get/page").then((response)=>{
+      axios.options(this.base_url+"/page", {data:{
+        "index":index,
+        "size":size,
+        "strength_key":strength_key,
+        "sort_by_name":sort_by_name
+      }}).then((response)=>{
+        console.log(response.data)
         resolve(response.data)
       })
       .catch((reason)=>{
@@ -112,10 +103,11 @@ export class BEService implements IMotivationService{
     })
   }
   remove(remove_id:number): Promise<void> {
+    this.setStatus()
     if (this.getStatus()===this.STATUS_OFF){
       this.storageQueue.add("remove", [remove_id])
       return new Promise<void>((resolve, reject)=>{
-        reject()
+        reject("connection looost :{")
       })
     }
     return new Promise<void>((resolve, reject) => {
@@ -174,6 +166,13 @@ export class BEService implements IMotivationService{
   }
   async update(id_:number, strength_:number, name_:string): Promise<void> {
     this.setStatus()
+    if (this.getStatus()===this.STATUS_OFF){
+      alert('connection lost to server')
+      this.storageQueue.add("update", [id_, strength_, name_])
+      return new Promise<void>((resolve, reject)=>{
+        reject("connection lost :P")
+      })
+    }
     return axios.put(this.base_url+"/update/"+id_, {
       id:id_,
       strength:strength_,

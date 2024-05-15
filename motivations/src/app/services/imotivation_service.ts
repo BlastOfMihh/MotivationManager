@@ -1,4 +1,5 @@
 import { IMotivation } from "../domain/imotivation"
+import { IPage } from "../domain/page"
 
 export class IMotivationService{
   constructor() {
@@ -12,8 +13,8 @@ export class IMotivationService{
   setData(data:IMotivation[]){
     
   }
-  async getPage():Promise<IMotivation[]>{
-    return []
+  async getPage(index:number, size:number, name_key:string, strength_key:number, sort_by_name:Boolean):Promise<IPage>{
+    throw Error("Paging not implemented :p")
   }
   async remove(remove_id:number) {
 

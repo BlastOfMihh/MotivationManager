@@ -1,4 +1,5 @@
 import { IMotivation } from "../domain/imotivation"
+import { IPage } from "../domain/page"
 import { IMotivationService } from "./imotivation_service"
 import { MemoryService } from "./memory_service"
 
@@ -9,9 +10,9 @@ export class DualService implements IMotivationService{
   constructor(currentService:IMotivationService, childService:IMotivationService){
     this.currentService=currentService
     this.childService=childService
-    this.childService.getAll().then((all)=>{
-      this.currentService.setData(all)
-    })
+    // this.childService.getAll().then((all)=>{
+    //   this.currentService.setData(all)
+    // })
     this.game_loop()
   }
   setData(): void {
@@ -58,19 +59,32 @@ export class DualService implements IMotivationService{
   async game_loop(){
     while(true){
       if (this.childService.fetchData()){
-        this.childService.getAll().then((all)=>{
-          this.currentService.setData(all)
-        })
+        // this.childService.getPage(0,3,"",3,false).then((page)=>{
+        //   this.currentService.setData(page.elements)
+        // })
+        // this.childService.getAll().then((all)=>{
+        //   this.currentService.setData(all)
+        // }
       }
-      await this.sleep(1000)
+      await this.sleep(10*1000)
     }
   }
   fetchData(): Boolean {
     throw new Error('Method not implemented.');
   }
-  getPage(): Promise<IMotivation[]> {
-    // return this.getAll()
-    throw new Error('Method not implemented.');
+  async getPage(index:number, size:number, name_key:string, strength_key:number, sort_by_name:Boolean): Promise<IPage> {
+    return new Promise<IPage>((accept, reject)=>{
+      this.childService.getPage(index,size,name_key,strength_key,sort_by_name).then((page)=>{
+          this.currentService.setData(page.elements)
+          accept(page)
+      }).catch( (reason)=>{
+        this.currentService.getPage(index,size,name_key,strength_key,sort_by_name).then( (page)=>{
+            accept(page)
+          }).catch( (args)=>{
+            reject(args)
+          })
+      })
+    })
   }
   async remove(remove_id: number): Promise<void> {
     this.childService.remove(remove_id)
@@ -80,7 +94,11 @@ export class DualService implements IMotivationService{
     })
   }
   async getById(id: number): Promise<IMotivation> {
-    throw new Error('Method not implemented.');
+    return new Promise<IMotivation>((resolve, reject)=>{
+      this.currentService.getById(id).then((motivation)=>{
+        resolve(motivation)
+      })    
+    })
   }
   async add(strength_: number, name_: string): Promise<IMotivation> {
     return new Promise<IMotivation>((resolve, reject)=>{
@@ -97,8 +115,8 @@ export class DualService implements IMotivationService{
     })
   }
   async update(id_: number, strength_: number, name_: string): Promise<void> {
-    await this.childService.update(id_, strength_, name_)
-    await this.currentService.update(id_, strength_, name_)
+    this.childService.update(id_, strength_, name_)
+    this.currentService.update(id_, strength_, name_)
     return new Promise<void>((accept, reject)=>{
       accept()
     })

@@ -49,22 +49,23 @@ export class PaginatorComponent implements MihhObserver{
     this.updateCurrentElements()
   }
   turnPage(){
-    this.service.turn_page()
+    this.currentPageIndex++
     this.updateCurrentElements()
   }
   turnBackPage(){
-    this.service.turn_back_page()
+    this.currentPageIndex--
     this.updateCurrentElements()
   }
   updateCurrentElements(){
-    this.service.getPage().then((response)=>{
-      this.currentElements=response
+    this.service.getPage(this.currentPageIndex-1, this.pageSize, "", -1, false).then((resopnse)=>{
+      this.currentElements=resopnse.elements
+      this.currentPageIndex=resopnse.index+1
     })
   }
 
   constructor() {
-    this.service.getPage().then((resopnse)=>{
-      this.currentElements=resopnse
+    this.service.getPage(this.currentPageIndex-1, this.pageSize, "", 3, false).then((resopnse)=>{
+      this.currentElements=resopnse.elements
     })
     this.service.register(this)
     // this.updateCurrentElements()
