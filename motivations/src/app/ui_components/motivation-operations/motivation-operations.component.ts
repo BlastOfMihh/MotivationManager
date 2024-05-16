@@ -16,6 +16,9 @@ import {RouterLink} from "@angular/router";
     <a routerLink="/update/{{motivation.id}}">
       <button> Update </button>
     </a>
+    <a routerLink="/update/{{motivation.id}}">
+      <button> Details </button>
+    </a>
     <button (click)="remove()" > REMOVE</button>
   ` ,
   styleUrl: './motivation-operations.component.css'
