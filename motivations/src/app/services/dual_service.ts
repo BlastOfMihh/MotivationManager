@@ -66,7 +66,7 @@ export class DualService implements IMotivationService{
         //   this.currentService.setData(all)
         // }
       }
-      await this.sleep(10*1000)
+      await this.sleep(100*1000)
     }
   }
   fetchData(): Boolean {

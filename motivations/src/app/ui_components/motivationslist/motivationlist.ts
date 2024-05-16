@@ -41,5 +41,4 @@ export class Motivationlist {
       this.motivations=response
     })
   }
-
 }

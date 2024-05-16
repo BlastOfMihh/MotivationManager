@@ -16,7 +16,7 @@ import {RouterLink} from "@angular/router";
     <a routerLink="/update/{{motivation.id}}">
       <button> Update </button>
     </a>
-    <a routerLink="/update/{{motivation.id}}">
+    <a routerLink="/details/{{motivation.id}}">
       <button> Details </button>
     </a>
     <button (click)="remove()" > REMOVE</button>
@@ -35,7 +35,5 @@ export class MotivationOperationsComponent implements MihhObserver{
     })
   }
   notify() {
-
   }
-
 }

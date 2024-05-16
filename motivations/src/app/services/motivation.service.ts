@@ -8,6 +8,8 @@ import { MemoryService } from './memory_service';
 import { DualService } from './dual_service';
 import { BEService } from './be_service';
 import { IPage } from '../domain/page';
+import { IFounder } from '../domain/ifounder';
+import axios from 'axios';
 
 
 export class MihhObservable{
@@ -34,6 +36,7 @@ export class MotivationService extends MihhObservable implements IMotivationServ
   wrapperService:DualService
   frontEndService:IMotivationService
   backEndService:IMotivationService
+  base_url="http://127.0.0.1:5000"
   constructor(){
     super()
     this.backEndService=new BEService()
@@ -120,5 +123,14 @@ export class MotivationService extends MihhObservable implements IMotivationServ
   }
   getStrengths(): Promise<number[]> {
     throw new Error('Method not implemented.');
+  }
+  async getFoudnersById(id: number): Promise<IFounder[]> {
+    return new Promise<IFounder[]>((resolve, reject) => {
+      axios.get(this.base_url + "/motivation/founders/" + id).then((response) => {
+        resolve(response.data);
+      }).catch((error) => {
+        reject(error);
+      });
+    });
   }
 }
