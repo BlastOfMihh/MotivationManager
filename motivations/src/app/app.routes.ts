@@ -4,12 +4,18 @@ import {UpdateComponent} from "./ui_components/update.component/update.component
 import {AddMotivationComponent} from "./ui_components/add-motivation/add-motivation.component";
 import { BarchartComponent } from './ui_components/barchart/barchart.component';
 import { DetailsPageComponent } from './ui_components/details-page/details-page.component';
+import { LoginPageComponent } from './ui_components/login-page/login-page.component';
 
 export const routes: Routes = [
   {
     path:'',
     component:Motivationlist,
     title:'All',
+  },
+  {
+    path:'login',
+    component:LoginPageComponent,
+    title:'Login',
   },
   {
     path:'add',

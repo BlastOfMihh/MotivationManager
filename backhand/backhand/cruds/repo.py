@@ -1,5 +1,6 @@
 from .motivation import Motivation
 from .founder import Founder
+from faker import Faker
 
 class Repo:
     def __init__(self, db) -> None:
@@ -48,3 +49,24 @@ class Repo:
         return Motivation.query.all()
     def founder_get_all(self):
         return Founder.query.all()
+    
+    def commit_to_db(self):
+        self.db.session.commit()
+
+    def add_secondary_faker_data(self, count=100000):
+        from random import choice
+        fakerul=Faker()
+        elements=self.get_all()
+        all_ids=[x._id for x in elements]
+        # print(all_ids)
+        new_founders=[]
+        for i in range(count):
+            _id=choice(all_ids)
+            new_founder=Founder(fakerul.name(), fakerul.email(), _id)
+            new_founders.append(new_founder)
+        self.db.session.bulk_save_objects(new_founders)
+        self.db.session.commit()
+
+    def get_founders_by_motivation_id(self, id):
+        founders = Founder.query.filter(Founder.motivation_id ==id)
+        return founders

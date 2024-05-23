@@ -9,7 +9,8 @@ import { IPage } from "../domain/page";
 
 export class BEService implements IMotivationService{
   filter_name:string=""
-  base_url="http://127.0.0.1:5000"
+  //base_url="http://127.0.0.1:5000"
+  base_url="https://mihh-qrpw2zrfcq-oe.a.run.app"
   get_all_url=this.base_url+"/get/all"
   get_url=this.base_url+"/get/"
   remove_url=this.base_url+"/remove"
@@ -88,12 +89,17 @@ export class BEService implements IMotivationService{
   async getPage(index:number, size:number, name_key:string, strength_key:number, sort_by_name:Boolean): Promise<IPage> {
     this.setStatus()
     return new Promise((resolve, reject)=>{
-      axios.options(this.base_url+"/page", {data:{
-        "index":index,
-        "size":size,
-        "strength_key":strength_key,
-        "sort_by_name":sort_by_name
-      }}).then((response)=>{
+      axios.post(this.base_url+"/page", 
+        {
+          "index": index,
+          "size": size,
+          "strength_key": strength_key,
+          "sort_by_name": sort_by_name
+        },
+        {headers: {
+          Authorization: `Bearer ${localStorage.getItem('jwt_token')}`
+        }}
+    ).then((response)=>{
         console.log(response.data)
         resolve(response.data)
       })

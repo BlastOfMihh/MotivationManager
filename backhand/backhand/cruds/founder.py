@@ -1,12 +1,13 @@
 from backhand import db
 from .motivation import Motivation
 from sqlalchemy import ForeignKey
+from sqlalchemy.orm import relationship
 
 class Founder(db.Model):
     __tablename__='Founders'
 
     _id=db.Column(db.Integer, primary_key=True)
-    motivation_id=db.Column(db.Integer, ForeignKey(Motivation._id))
+    motivation_id=db.Column(db.Integer, ForeignKey("motivations._id"), nullable=False)
     name=db.Column(db.Text, nullable=False)
     email=db.Column(db.Text, nullable=False)
 
@@ -21,7 +22,7 @@ class Founder(db.Model):
         return (motivation.strength<=5 and motivation.strength>=0)
     
     def to_dict(self):
-        return {"id" :self.motivation_id, "name": self.name, "strength": self.email}
+        return {"id":self._id, "motivation_id":self.motivation_id, "name": self.name, "email": self.email}
 
     def __repr__(self) -> str:
         return {"id" :self.motivation_id, "name": self.name, "strength": self.email}

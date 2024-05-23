@@ -9,10 +9,13 @@ from backhand.cruds import bp
 
 from flask import jsonify, session, request, redirect, url_for
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity, get_jwt
+from flask_bcrypt import bcrypt
 
 
 db=SQLAlchemy() if 'db' not in locals() else db
 jwt=JWTManager() if 'jwt' not in locals() else jwt
+
+from .cruds.user import User
 
 def create_app():
     app=Flask(__name__)
@@ -28,12 +31,48 @@ def create_app():
     from backhand.cruds.repo import Repo
     from backhand.cruds.service import Service
     # app.register_blueprint(bp)
+    jwt.init_app(app=app)
+
     xrepo=Repo(db)
     service=Service(xrepo)
     register_routes(app,service)
 
-    # JWT Initialization
-    jwt.init_app(app=app)
-
     migrate=Migrate(app, db)
+
+    
+    @app.route('/login', methods=['POST'])
+    def login():
+        data = request.get_json()
+        username = data['username']
+        password = data['password']
+        print('Received data:', username , password)
+
+        user = User.query.filter_by(username=username).first()
+
+        if user : #and bcrypt.check_password_hash(user.password, password):
+            access_token = create_access_token(identity=user._id)
+            return {'message': 'Login Success', 'access_token': access_token}
+        else:
+            return {'message': 'Login Failed'}, 401
+    
+    @app.route('/register', methods=['POST'])
+    def register():
+        data = request.get_json()
+        username = data['username']
+        user_type = data['user_type']
+        password = data['password']
+        print('Received data:', username , password)
+        new_user = User(username=username, user_type=user_type, password=password, is_active=True)
+        db.session.add(new_user)
+        db.session.commit()
+        # if user and bcrypt.check_password_hash(user.password, password):
+        #     access_token = create_access_token(identity=user.id)
+        #     return {'message': 'Login Success', 'access_token': access_token}
+        # else:
+        #     return {'message': 'Login Failed'}, 401
+        return {'registerd'}
+        return {'registerd'},401
+
+
+
     return app

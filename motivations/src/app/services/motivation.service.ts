@@ -36,7 +36,8 @@ export class MotivationService extends MihhObservable implements IMotivationServ
   wrapperService:DualService
   frontEndService:IMotivationService
   backEndService:IMotivationService
-  base_url="http://127.0.0.1:5000"
+  //base_url="http://127.0.0.1:5000"
+  base_url="https://mihh-qrpw2zrfcq-oe.a.run.app"
   constructor(){
     super()
     this.backEndService=new BEService()

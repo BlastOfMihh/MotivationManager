@@ -2,28 +2,33 @@
 # from .repo import Repo
 
 from .exceptions import InvalidMotivation
-
 from flask import request
 
+
+from flask import jsonify, session, request, redirect, url_for
+from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity, get_jwt
+from flask_bcrypt import bcrypt
+
+# from .user import User
 
 def register_routes(bp, service):
     # xrepo=Repo()
     # service=Service(xrepo)
     # service.add_examples()
-    @bp.route('/login', methods=['POST'])
-    def login():
-        data = request.get_json()
-        username = data['username']
-        password = data['password']
-        print('Received data:', username , password)
+    # @bp.route('/login', methods=['POST'])
+    # def login():
+    #     data = request.get_json()
+    #     username = data['username']
+    #     password = data['password']
+    #     print('Received data:', username , password)
 
-        user = User.query.filter_by(username=username).first()
+    #     user = User.query.filter_by(username=username).first()
 
-        if user and bcrypt.check_password_hash(user.password, password):
-            access_token = create_access_token(identity=user.id)
-            return {'message': 'Login Success', 'access_token': access_token}
-        else:
-            return {'message': 'Login Failed'}, 401
+    #     if user and bcrypt.check_password_hash(user.password, password):
+    #         access_token = create_access_token(identity=user.id)
+    #         return {'message': 'Login Success', 'access_token': access_token}
+    #     else:
+    #         return {'message': 'Login Failed'}, 401
     
     @bp.route('/ping', methods=['GET'])
     def ping():
@@ -42,6 +47,7 @@ def register_routes(bp, service):
                 return str(e)
 
     @bp.route('/get/all', methods=['GET'])
+    # @jwt_required()
     def get_all():
         if request.method=='GET':
             return service.get_all_dict()
@@ -69,13 +75,22 @@ def register_routes(bp, service):
         return 404
 
     @bp.route('/sort', methods=['PUT'])
+    @jwt_required()
     def toggle_sort_flag():
+        return "this is the return"
         if request.method=='PUT':
             service.toggle_sorting()
             return {}
         return 402
+    
+    @bp.route('/do_faker', methods=['GET'])
+    def faker_stuff():
+        # service.add_faker_data()
+        service.add_secondary_faker_data()
+        return {}
 
     @bp.route('/update/<id>', methods=['PUT'])
+    @jwt_required()
     def update(id):
         if request.method=='PUT':
             id=int(id)
@@ -86,9 +101,10 @@ def register_routes(bp, service):
             # except Exception as e:
             #     return str(e)
 
-    @bp.route('/page', methods=['OPTIONS'])
+    @bp.route('/page', methods=['POST'])
+    @jwt_required()
     def get_page():
-        if request.method=='OPTIONS':
+        if request.method=='POST':
             try:
                 data_json=request.get_json()
                 page_index=int(data_json["index"])
@@ -180,3 +196,17 @@ def register_routes(bp, service):
                 return {}, 202
             except Exception as e:
                 return str(e), 404
+    
+    @bp.route("/motivation/founders/<id>", methods=['GET'])
+    def get_founder_by_motivation_id(id):
+        if request.method=='GET':
+            try:
+                founders=service.get_founders_by_motivation_id(id)
+                return [x.to_dict() for x in founders]
+            except Exception as e:
+                return str(e), 404 
+
+    @bp.route("/commit", methods=['GET'])
+    def commit_to_db():
+        service.commit_to_db()
+        return {}
