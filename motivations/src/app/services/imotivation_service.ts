@@ -39,14 +39,6 @@ export class IMotivationService{
   async filter(filter_name:string){
   }
 
-  async turn_page(){
-  }
-  async turn_back_page(){
-  }
-  
-  async set_page(page_index:number, page_size:number){
-  }
-
   async filterStrength(strenght:number){
   }
 

@@ -1,15 +1,12 @@
 import {Component, inject} from '@angular/core';
 import {CommonModule, NgFor, NgForOf} from "@angular/common";
-import {MotivationService, MihhObserver} from "../../../services/motivation.service";
+import {MotivationService} from "../../../services/motivation.service";
 import {IMotivation} from "../../../domain/imotivation";
 import {MotivationDisplayComponent} from "../../motiviation-display/motivation-display.component";
-import {min} from "rxjs";
 import {MotivationOperationsComponent} from "../../motivation-operations/motivation-operations.component";
 import {SortButtonComponent} from "../../sort-button/sort-button.component";
 import {FormsModule} from "@angular/forms";
-import { HttpClient } from '@angular/common/http';
-import { BarchartComponent } from '../../barchart/barchart.component';
-
+import { SocketOne } from '../../app_component/app.component';
 
 @Component({
   selector: 'app-paginator',
@@ -32,7 +29,9 @@ import { BarchartComponent } from '../../barchart/barchart.component';
     </table>
 
     <button (click)="turnBackPage()"> Previous </button>
-    {{currentPageIndex}} / {{totalPageIndex}}
+    <button style="background-color: white; color:black">
+      {{currentPageIndex}} / {{totalPageIndex}}
+    </button>
     <button (click)="turnPage()"> Next </button>
     <select (change)="updatePageSize()" [(ngModel)]="pageSize">
       <option *ngFor="let nr of pageSizes"> {{nr}}</option>
@@ -40,7 +39,7 @@ import { BarchartComponent } from '../../barchart/barchart.component';
   `,
   styleUrl: './paginator.component.css'
 })
-export class PaginatorComponent implements MihhObserver{
+export class PaginatorComponent {
   service:MotivationService=inject(MotivationService)
   startIndex:number=0
   pageSize:number=3
@@ -49,14 +48,10 @@ export class PaginatorComponent implements MihhObserver{
   currentElements:IMotivation[]=[]
   motivations=this.service.getAll()
   pageSizes:number[]=[1,2,3,4,5,6]
+  socket=inject(SocketOne)
 
   updatePageSize(){
-    this.totalPageIndex=6/this.pageSize
-    this.service.set_page(1,this.pageSize)
-    this.updateCurrentElements()
-    // this.
-  }
-  notifyChange() {
+    this.totalPageIndex=Math.ceil(this.pageSizes[this.pageSizes.length-1]/this.pageSize)
     this.updateCurrentElements()
   }
   turnPage(){
@@ -71,15 +66,21 @@ export class PaginatorComponent implements MihhObserver{
     this.service.getPage(this.currentPageIndex-1, this.pageSize, "", -1, false).then((resopnse)=>{
       this.currentElements=resopnse.elements
       this.currentPageIndex=resopnse.index+1
+      while(this.pageSizes.length>0)
+        this.pageSizes.pop()
+      let pageIncrement=1
+      for (let pageSize=1; pageSize<=resopnse.max_page_size;pageSize+=pageIncrement){
+        this.pageSizes.push(pageSize);
+        if (pageSize>100)
+          pageIncrement=100
+      }
+      
     })
   }
-
   constructor() {
-    this.service.getPage(this.currentPageIndex-1, this.pageSize, "", 3, false).then((resopnse)=>{
-      this.currentElements=resopnse.elements
+    this.socket.on('refresh', (data:any)=>{
+      this.updatePageSize()
     })
-    this.service.register(this)
-    // this.updateCurrentElements()
+    this.updatePageSize()
   }
-
 }

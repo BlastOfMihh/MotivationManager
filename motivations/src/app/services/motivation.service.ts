@@ -15,33 +15,15 @@ import { ChartData } from 'chart.js';
 import { IChartDataPoint } from '../domain/chart_data';
 
 
-export class MihhObservable{
-  registeredObjects:MihhObserver[]=[]
-  register(observer:MihhObserver){
-    this.registeredObjects.push(observer)
-  }
-  notifyObservers(){
-    for(let i=0; i<this.registeredObjects.length; ++i){
-      this.registeredObjects[i].notifyChange()
-    }
-  }
-}
-export class MihhObserver{
-  notifyChange(){
-  };
-}
-
-
 @Injectable({
   providedIn: 'root'
 })
-export class MotivationService extends MihhObservable implements IMotivationService{
+export class MotivationService implements IMotivationService{
   wrapperService:DualService
   frontEndService:IMotivationService
   backEndService:IMotivationService
   base_url=ServerUrls.base
   constructor(){
-    super()
     this.backEndService=new BEService()
     this.frontEndService=new MemoryService()
     this.wrapperService=new DualService(this.frontEndService, this.backEndService)
@@ -76,7 +58,6 @@ export class MotivationService extends MihhObservable implements IMotivationServ
   remove(remove_id: number): Promise<void> {
     return new Promise<void>((accept, reject)=>{
       this.wrapperService.remove(remove_id).then((response)=>{
-        this.notifyObservers()
         accept(response)
       })
     })
@@ -91,7 +72,6 @@ export class MotivationService extends MihhObservable implements IMotivationServ
   add(strength_: number, name_: string): Promise<IMotivation> {
     return new Promise<IMotivation>((accept, reject)=>{
       this.wrapperService.add(strength_, name_).then((response)=>{
-        this.notifyObservers()
         accept(response)
       })
     })
@@ -99,7 +79,6 @@ export class MotivationService extends MihhObservable implements IMotivationServ
   update(id_: number, strength_: number, name_: string): Promise<void> {
     return new Promise<void>((accept, reject)=>{
       this.wrapperService.update(id_, strength_, name_).then((response)=>{
-        this.notifyObservers()
         accept(response)
       }).catch((reason)=>{
         reject(reason)
@@ -110,15 +89,6 @@ export class MotivationService extends MihhObservable implements IMotivationServ
     throw new Error('Method not implemented.');
   }
   filter(filter_name: string): Promise<void> {
-    throw new Error('Method not implemented.');
-  }
-  turn_page(): Promise<void> {
-    throw new Error('Method not implemented.');
-  }
-  turn_back_page(): Promise<void> {
-    throw new Error('Method not implemented.');
-  }
-  set_page(page_index: number, page_size: number): Promise<void> {
     throw new Error('Method not implemented.');
   }
   filterStrength(strenght: number): Promise<void> {

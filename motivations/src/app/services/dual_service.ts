@@ -128,15 +128,6 @@ export class DualService implements IMotivationService{
   filter(filter_name: string): Promise<void> {
     throw new Error('Method not implemented.');
   }
-  turn_page(): Promise<void> {
-    throw new Error('Method not implemented.');
-  }
-  turn_back_page(): Promise<void> {
-    throw new Error('Method not implemented.');
-  }
-  set_page(page_index: number, page_size: number): Promise<void> {
-    throw new Error('Method not implemented.');
-  }
   filterStrength(strenght: number): Promise<void> {
     throw new Error('Method not implemented.');
   }

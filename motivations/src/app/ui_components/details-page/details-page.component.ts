@@ -5,7 +5,7 @@ import { NgFor } from '@angular/common';
 import { Router } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
 import { Inject } from '@angular/core';
-import { MihhObserver, MotivationService } from '../../services/motivation.service';
+import {MotivationService } from '../../services/motivation.service';
 
 @Component({
   selector: 'app-details-page',
@@ -22,7 +22,7 @@ import { MihhObserver, MotivationService } from '../../services/motivation.servi
   `,
   styleUrl: './details-page.component.css'
 })
-export class DetailsPageComponent implements MihhObserver{
+export class DetailsPageComponent{
   motivationId:number
   founders:IFounder[]=[{
     name:"dummy",
@@ -34,15 +34,11 @@ export class DetailsPageComponent implements MihhObserver{
   service:MotivationService=inject(MotivationService)
   constructor(){
     this.motivationId=Number(this.route.snapshot.params['id']);
-    this.service.register(this)
-    // console.log(this.founders)
     this.service.getFoudnersById(this.motivationId).then((response)=>{
       this.founders=response
-      console.log(response)
+      //console.log(response)
     }).catch((error)=>{
 
     })
-  }
-  notifyChange(): void {
   }
 }

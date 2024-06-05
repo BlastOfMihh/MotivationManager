@@ -2,7 +2,7 @@ import {Component, inject, Input} from '@angular/core';
 import {MotivationDisplayComponent} from "../motiviation-display/motivation-display.component";
 import {FormsModule} from "@angular/forms";
 import {IMotivation} from "../../domain/imotivation";
-import {MotivationService, MihhObserver} from "../../services/motivation.service";
+import {MotivationService} from "../../services/motivation.service";
 import {RouterLink} from "@angular/router";
 
 @Component({
@@ -18,17 +18,13 @@ import {RouterLink} from "@angular/router";
   ` ,
   styleUrl: './motivation-operations.component.css'
 })
-export class MotivationOperationsComponent implements MihhObserver{
+export class MotivationOperationsComponent {
   @Input()motivation!:IMotivation
   service=inject(MotivationService)
   constructor(){
-    this.service.register(this)
   }
   remove(){
     this.service.remove(this.motivation.id).then((response)=>{
-      this.service.notifyObservers()
     })
-  }
-  notifyChange() {
   }
 }

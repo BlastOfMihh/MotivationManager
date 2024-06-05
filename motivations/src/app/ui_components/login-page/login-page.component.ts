@@ -28,17 +28,18 @@ export class LoginPageComponent {
   }
   set_token(){
   }
-  login(){
-    axios.post(this.service.base_url+"/login", 
+  async login(){
+    let response = await axios.post(this.service.base_url+"/login", 
     {
       "username":this.user.username,
       "user_type":"basic",
       "password":this.user.password
-    }).then(function (response) {
+    })
+    if (response.status === 200){
       localStorage.setItem("jwt_token", response.data.access_token)
-    }).catch(function (error) {
-
-    });
-    this.router.navigate(['/'])
+      this.router.navigate(["/"])
+    }else{
+      alert("bad login attempt")
+    }
   }
 }

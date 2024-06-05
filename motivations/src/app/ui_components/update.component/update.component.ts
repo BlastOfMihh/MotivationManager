@@ -1,6 +1,6 @@
 import {Component, inject, Input} from '@angular/core';
 import {IMotivation} from "../../domain/imotivation";
-import {MihhObservable, MihhObserver, MotivationService} from "../../services/motivation.service";
+import {MotivationService} from "../../services/motivation.service";
 import {FormsModule} from "@angular/forms";
 import {ActivatedRoute} from "@angular/router";
 
@@ -18,7 +18,7 @@ import {ActivatedRoute} from "@angular/router";
   `,
   styleUrl: './update.component.css'
 })
-export class UpdateComponent implements MihhObserver{
+export class UpdateComponent {
   //@Input()motivation!:IMotivation
   motivation:IMotivation={strength:0.2, id:-1, name:'lame'}
   route: ActivatedRoute = inject(ActivatedRoute);
@@ -35,9 +35,6 @@ export class UpdateComponent implements MihhObserver{
       this.motivation.name=currentMotivation.name
       this.motivation.strength=currentMotivation.strength
     })
-
-  }
-  notifyChange(){
 
   }
   update(){

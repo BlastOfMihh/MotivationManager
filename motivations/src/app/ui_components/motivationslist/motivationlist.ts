@@ -25,6 +25,7 @@ import { BarchartComponent } from '../barchart/barchart.component';
     <br>
     <app-filter> </app-filter>
     <br>
+    <br>
     <app-network-status-checker> </app-network-status-checker>
     <!-- <app-sort-button></app-sort-button> -->
     <!-- <a routerLink="/barchart"> <button> Barchart </button> <a> -->

@@ -32,7 +32,8 @@ export class MemoryService implements IMotivationService{
       this.getAll().then((elements)=>{
         accept( {
           index:index,
-          elements:elements
+          elements:elements,
+          max_page_size:elements.length
         })
       }).catch((reason)=>{
         reject(reason)
@@ -97,15 +98,6 @@ export class MemoryService implements IMotivationService{
     throw new Error('Method not implemented.');
   }
   async filter(filter_name: string): Promise<void> {
-    throw new Error('Method not implemented.');
-  }
-  async turn_page(): Promise<void> {
-    throw new Error('Method not implemented.');
-  }
-  async turn_back_page(): Promise<void> {
-    throw new Error('Method not implemented.');
-  }
-  async set_page(page_index: number, page_size: number): Promise<void> {
     throw new Error('Method not implemented.');
   }
   async filterStrength(strenght: number): Promise<void> {

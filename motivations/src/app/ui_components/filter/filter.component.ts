@@ -1,5 +1,5 @@
 import {Component, inject} from '@angular/core';
-import {MihhObserver, MotivationService} from "../../services/motivation.service";
+import {MotivationService} from "../../services/motivation.service";
 import {FormsModule, NgModel} from "@angular/forms";
 import { NgFor } from '@angular/common';
 import { IMotivation } from '../../domain/imotivation';
@@ -14,31 +14,28 @@ import { IMotivation } from '../../domain/imotivation';
   template: `
     <input [(ngModel)]="nameFilter" >
     <button (click)="update()"> filter </button>
-    <br>
-    <select (change)="sortByStrength()" [(ngModel)]="strenghtFilter">
+    <!-- <br> -->
+    <!-- <select (change)="sortByStrength()" [(ngModel)]="strenghtFilter">
       <option *ngFor="let nr of strenghtOptions"> {{nr}}</option>
     </select>
-    <button (click)="sortByStrength()"> filter by strength </button>
+    <button (click)="sortByStrength()"> filter by strength </button> -->
   `,
   styleUrl: './filter.component.css'
 })
-export class FilterComponent implements MihhObserver{
+export class FilterComponent {
   service=inject(MotivationService)
   nameFilter:string=""
   strenghtOptions:Number[]=[1, 2, 3 ,4 ,5]
   strenghtFilter=4
   constructor(){
-    this.service.register(this)
   }
   update(){
     this.service.filter(this.nameFilter)
-  }
-  sortByStrength(){
-    this.service.filterStrength(this.strenghtFilter)
-  }
-  notifyChange(){
     this.service.getStrengths().then((response)=>{
       this.strenghtOptions=response
     })
+  }
+  sortByStrength(){
+    this.service.filterStrength(this.strenghtFilter)
   }
 }

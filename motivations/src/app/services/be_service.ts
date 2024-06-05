@@ -104,7 +104,6 @@ export class BEService implements IMotivationService{
           Authorization: `Bearer ${localStorage.getItem('jwt_token')}`
         }}
     ).then((response)=>{
-        console.log(response.data)
         resolve(response.data)
       })
       .catch((reason)=>{
@@ -198,28 +197,6 @@ export class BEService implements IMotivationService{
     return axios.put(this.base_url + "/filter", {
       name_filter_key: filter_name
     })
-  }
-
-  turn_page(): Promise<void> {
-    this.setStatus()
-    return axios.put(this.base_url + "/page/turn")
-  }
-  turn_back_page(): Promise<void> {
-    this.setStatus()
-    return axios.put(this.base_url + "/page/turn_back")
-  }
-
-  set_page(page_index: number, page_size: number): Promise<void> { // modify if needed 
-    this.setStatus()
-    let page = { index: page_index, size: page_size }
-    return axios.put(this.base_url + "/set_page", {
-      index: page_index,
-      size: page_size
-    }).then((response) => {
-      response.data;
-      page.index = response.data.index
-      page.size = response.data.size
-    });
   }
 
   filterStrength(strenght: number): Promise<void> {
