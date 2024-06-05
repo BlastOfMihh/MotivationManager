@@ -11,9 +11,8 @@ import {ActivatedRoute} from "@angular/router";
     FormsModule
   ],
   template: `
-    <h1> Update </h1>
-    <span> Enter name: </span> <input [(ngModel)]="motivation.name" type="string"> <br>
-    <span> Enter strength: </span> <input [(ngModel)]="motivation.strength" step=".5" min="0" max="5" type="number" >
+    <span> Name: </span> <input [(ngModel)]="motivation.name" type="string"> <br>
+    <span> Strength: </span> <input [(ngModel)]="motivation.strength" step=".5" min="0" max="5" type="number" >
     <br>
     <button (click)="update()"> Update </button>
   `,

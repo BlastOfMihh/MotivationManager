@@ -1,3 +1,4 @@
+import { IChartDataPoint } from "../domain/chart_data"
 import { IMotivation } from "../domain/imotivation"
 import { IPage } from "../domain/page"
 import { IMotivationService } from "./imotivation_service"
@@ -141,6 +142,16 @@ export class DualService implements IMotivationService{
   }
   getStrengths(): void {
     throw new Error('Method not implemented.');
+  }
+  async getChartData():Promise<IChartDataPoint[]>{
+    return new Promise((resolve, reject)=>{
+      this.childService.getChartData()
+      .then((response)=>{
+        resolve(response)
+      }).catch((reason)=>{
+        resolve([])
+      })
+    });
   }
 }
 

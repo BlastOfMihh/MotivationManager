@@ -7,7 +7,8 @@
 
 body {
   font-family: 'Arial', sans-serif;
-  background-color: #f4f4f4;
+  /* background-color: #f4f4f4; */
+  background-color: #ffffff;
   color: #333;
 }
 
@@ -79,8 +80,8 @@ th {
 }
 
 @keyframes hoverFade {
-  from { background-color: #f2f2f2; }
-  to { background-color: #ffffff; }
+  from { background-color: #ffffff; }
+  to { background-color: #f3f3f3; }
 }
 tr{
   animation: fadeIn 0.2s ease-in-out;
@@ -95,7 +96,7 @@ select {
   padding: 10px 15px;
   border: none;
   border-radius: 0px;
-  background-color: #ffffff;
+  background-color: #f3f3f3;
   color: #333;
   font-size: 16px;
 /*  appearance: none; /* Remove default arrow */
@@ -112,7 +113,7 @@ input {
   padding: 10px 15px;
   border: none;
   /* border-radius: 4px; */
-  background-color: #ffffff;
+  background-color: #f3f3f3;
   color: #333;
   font-size: 16px;
 }

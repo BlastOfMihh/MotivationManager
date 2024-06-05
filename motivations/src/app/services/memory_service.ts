@@ -1,3 +1,4 @@
+import { IChartDataPoint } from "../domain/chart_data";
 import { IMotivation } from "../domain/imotivation";
 import { IPage } from "../domain/page";
 import { IMotivationService } from "./imotivation_service";
@@ -111,6 +112,9 @@ export class MemoryService implements IMotivationService{
     throw new Error('Method not implemented.');
   }
   async getStrengths(): Promise<void> {
+    throw new Error('Method not implemented.');
+  }
+  async getChartData():Promise<IChartDataPoint[]>{
     throw new Error('Method not implemented.');
   }
 

@@ -1,5 +1,7 @@
+import { ChartData } from "chart.js"
 import { IMotivation } from "../domain/imotivation"
 import { IPage } from "../domain/page"
+import { IChartDataPoint } from "../domain/chart_data"
 
 export class IMotivationService{
   constructor() {
@@ -50,5 +52,7 @@ export class IMotivationService{
 
   getStrengths(){
   }
-
+  async getChartData():Promise<IChartDataPoint[]>{
+    throw "Not implemented interface"
+  }
 }

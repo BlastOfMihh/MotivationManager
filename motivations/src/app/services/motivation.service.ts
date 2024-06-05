@@ -10,6 +10,9 @@ import { BEService } from './be_service';
 import { IPage } from '../domain/page';
 import { IFounder } from '../domain/ifounder';
 import axios from 'axios';
+import { ServerUrls } from './url';
+import { ChartData } from 'chart.js';
+import { IChartDataPoint } from '../domain/chart_data';
 
 
 export class MihhObservable{
@@ -36,8 +39,7 @@ export class MotivationService extends MihhObservable implements IMotivationServ
   wrapperService:DualService
   frontEndService:IMotivationService
   backEndService:IMotivationService
-  base_url="http://127.0.0.1:5000"
-  // base_url="https://mihh-qrpw2zrfcq-oe.a.run.app"
+  base_url=ServerUrls.base
   constructor(){
     super()
     this.backEndService=new BEService()
@@ -132,6 +134,15 @@ export class MotivationService extends MihhObservable implements IMotivationServ
       }).catch((error) => {
         reject(error);
       });
+    });
+  }
+  async getChartData():Promise<IChartDataPoint[]>{
+    return new Promise((resolve, reject)=>{
+      this.wrapperService.getChartData().then((response)=>{
+        resolve(response)
+      }).catch((reason)=>{
+        reject(reason)
+      })
     });
   }
 }

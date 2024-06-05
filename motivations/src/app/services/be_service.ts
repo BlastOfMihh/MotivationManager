@@ -6,11 +6,15 @@ import { inject } from "@angular/core";
 import axios from 'axios';
 import { OperationsQueue } from "./operations_queue";
 import { IPage } from "../domain/page";
+import { ServerUrls } from "./url";
+import { SocketOne } from "../ui_components/app_component/app.component";
+import { IChartDataPoint } from "../domain/chart_data";
+
 
 export class BEService implements IMotivationService{
+
   filter_name:string=""
-  base_url="http://127.0.0.1:5000"
-  // base_url="https://mihh-qrpw2zrfcq-oe.a.run.app"
+  base_url=ServerUrls.base
   get_all_url=this.base_url+"/get/all"
   get_url=this.base_url+"/get/"
   remove_url=this.base_url+"/remove"
@@ -147,52 +151,52 @@ export class BEService implements IMotivationService{
       });
     });
   }
-  async add(strength_:number, name_:string): Promise<IMotivation> {
-    if (this.getStatus()==this.STATUS_OFF){
-        alert('connection lost to server')
-        this.storageQueue.add("add", [strength_, name_])
-        return new Promise<IMotivation>((resolve, reject) => {
-          reject("conneciton lost")
-        })
-  }
-  else {
+  async add(strength_: number, name_: string): Promise<IMotivation> {
+    if (this.getStatus() == this.STATUS_OFF) {
+      alert('connection lost to server')
+      this.storageQueue.add("add", [strength_, name_])
+      return new Promise<IMotivation>((resolve, reject) => {
+        reject("conneciton lost")
+      })
+    }
+    else {
       alert("oke")
       return new Promise<IMotivation>((resolve, reject) => {
-      axios.post(this.add_url, {
-          id:2,
-            name:name_,
-            strength: strength_
+        axios.post(this.add_url, {
+          id: 2,
+          name: name_,
+          strength: strength_
         }).then(function (response) {
-            resolve(response.data);
+          resolve(response.data);
         }).catch(function (error) {
-            reject(error);
+          reject(error);
         });
-        });
+      });
     }
   }
-  async update(id_:number, strength_:number, name_:string): Promise<void> {
+  async update(id_: number, strength_: number, name_: string): Promise<void> {
     this.setStatus()
-    if (this.getStatus()===this.STATUS_OFF){
+    if (this.getStatus() === this.STATUS_OFF) {
       alert('connection lost to server')
       this.storageQueue.add("update", [id_, strength_, name_])
-      return new Promise<void>((resolve, reject)=>{
+      return new Promise<void>((resolve, reject) => {
         reject("connection lost :P")
       })
     }
-    return axios.put(this.base_url+"/update/"+id_, {
-      id:id_,
-      strength:strength_,
-      name:name_
+    return axios.put(this.base_url + "/update/" + id_, {
+      id: id_,
+      strength: strength_,
+      name: name_
     });
   }
   async sort(): Promise<void> {
     this.setStatus()
-    return axios.put(this.base_url+"/sort")
+    return axios.put(this.base_url + "/sort")
   }
-  async filter(filter_name:string): Promise<void> {
+  async filter(filter_name: string): Promise<void> {
     this.setStatus()
-    return axios.put(this.base_url+"/filter", {
-      name_filter_key:filter_name
+    return axios.put(this.base_url + "/filter", {
+      name_filter_key: filter_name
     })
   }
 
@@ -200,40 +204,50 @@ export class BEService implements IMotivationService{
     this.setStatus()
     return axios.put(this.base_url + "/page/turn")
   }
-  turn_back_page():Promise<void>{
+  turn_back_page(): Promise<void> {
     this.setStatus()
     return axios.put(this.base_url + "/page/turn_back")
   }
-  
-  set_page(page_index:number, page_size:number): Promise<void> { // modify if needed 
+
+  set_page(page_index: number, page_size: number): Promise<void> { // modify if needed 
     this.setStatus()
-    let page={index:page_index, size:page_size}
+    let page = { index: page_index, size: page_size }
     return axios.put(this.base_url + "/set_page", {
-        index: page_index,
-        size: page_size
+      index: page_index,
+      size: page_size
     }).then((response) => {
       response.data;
-      page.index=response.data.index
-      page.size=response.data.size
+      page.index = response.data.index
+      page.size = response.data.size
     });
   }
 
-  filterStrength(strenght:number): Promise<void> {
+  filterStrength(strenght: number): Promise<void> {
     this.setStatus()
-    return axios.put(this.base_url+"/filter/strength", {
-      strength_key:strenght
+    return axios.put(this.base_url + "/filter/strength", {
+      strength_key: strenght
     })
   }
 
-  getStrengths(){
+  getStrengths() {
     this.setStatus()
-    let data:number[]=[1, 2, 3]
-    while(data.length>0)
+    let data: number[] = [1, 2, 3]
+    while (data.length > 0)
       data.pop()
-    axios.get(this.base_url+"/get/strengths").then((response)=>{
+    axios.get(this.base_url + "/get/strengths").then((response) => {
       for (let x of response.data)
         data.push(x)
     })
     return data
+  }
+  async getChartData():Promise<IChartDataPoint[]>{
+    return new Promise((accept, reject)=>{
+      axios.get(this.base_url + "/chart_data")
+      .then((response) => {
+        accept( response.data)
+      }).catch((reason)=>{
+        reject(reason)
+      })
+    })
   }
 }

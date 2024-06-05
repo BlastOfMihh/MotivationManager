@@ -4,6 +4,8 @@ import { AgChartOptions } from 'ag-charts-community';
 import {MihhObserver, MotivationService} from "../../services/motivation.service";
 import {Observer} from "rxjs";
 import {IMotivation} from "../../domain/imotivation";
+import { SocketOne } from '../app_component/app.component';
+import { IChartDataPoint } from '../../domain/chart_data';
 
 @Component({
   selector: 'app-barchart',
@@ -16,36 +18,30 @@ import {IMotivation} from "../../domain/imotivation";
 export class BarchartComponent implements MihhObserver{
   public chartOptions: AgChartOptions;
   service=inject(MotivationService)
-  motivations:IMotivation[]=[]
+  socket=inject(SocketOne)
+
+  data:IChartDataPoint[]=[]
   constructor() {
+
+    this.socket.on('refresh', (data:any)=>{
+      this.update()
+    })
     this.service.register(this)
     this.chartOptions = {
-      data: this.motivations,
-      series: [{ type: 'bar', xKey: 'name', yKey: 'strength' }]
     };
-    this.service.getAll().then((response)=>{
-      this.motivations=response
-      this.chartOptions = {
-        data: this.motivations,
-        series: [{ type: 'bar', xKey: 'name', yKey: 'strength' }]
-      };
-    })
+    this.update()
   }
   notifyChange(){
     // this.motivations=this.service.getAll()
     this.update()
   }
   async update(){
-    // let updated_data=this.service.getAll()
-    // while(this.motivations.length>0)
-      // this.motivations.pop()
-    // for (let x of updated_data)
-    // this.motivations.push(updated_data[0])
-    this.service.getAll().then((response)=>{
-      this.motivations=response
+    this.service.getChartData().then((response)=>{
+      this.data=response
+      console.log(this.data)
       this.chartOptions = {
-        data: this.motivations,
-        series: [{ type: 'bar', xKey: 'name', yKey: 'strength' }]
+        data: this.data,
+        series: [{ type: 'bar', xKey: 'strength', yKey: 'count', fill:'#007BFF', fillOpacity:0.7 }]
       };
     })
   }

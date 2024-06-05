@@ -1,25 +1,11 @@
 import { Server } from 'http';
-// import {}
+import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
 
-// class SocketService {
-//     private io: socketIO.Server;
+class SocketService {
 
-//     constructor(server: Server) {
-//         this.io = socketIO(server);
+    constructor(server: Server) {
 
-//         this.io.on('connection', (socket: socketIO.Socket) => {
-//             console.log('A user connected');
+    }
+}
 
-//             socket.on('disconnect', () => {
-//                 console.log('A user disconnected');
-//             });
-
-//             socket.on('message', (message: string) => {
-//                 console.log('Message received: ', message);
-//                 this.io.emit('message', message);
-//             });
-//         });
-//     }
-// }
-
-// export default SocketService;
+export default SocketService;
