@@ -2,16 +2,16 @@ import { Component, inject } from '@angular/core';
 import axios from 'axios';
 import { MotivationService } from '../../services/motivation.service';
 import {FormsModule} from "@angular/forms";
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login-page',
   standalone: true,
   imports: [FormsModule],
   template:`
-    <h1> LOGIN pls</h1>
-    USERNAME : <input [(ngModel)]="user.username">
+    USERNAME <input [(ngModel)]="user.username">
     <br>
-    PASSWORD : <input type="password" [(ngModel)]="user.password">
+    PASSWORD <input type="password" [(ngModel)]="user.password">
     <br>
     <button (click)="this.login()"> enter the matrix</button>
   `,
@@ -19,6 +19,7 @@ import {FormsModule} from "@angular/forms";
 })
 export class LoginPageComponent {
   service:MotivationService=inject(MotivationService)
+  router:Router=inject(Router)
   user={
     username:"",
     password:""
@@ -38,5 +39,6 @@ export class LoginPageComponent {
     }).catch(function (error) {
 
     });
+    this.router.navigate(['/'])
   }
 }

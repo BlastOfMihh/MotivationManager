@@ -9,9 +9,11 @@ from flask import jsonify, session, request, redirect, url_for
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity, get_jwt
 from flask_bcrypt import bcrypt
 
+from flask_socketio import send
+
 # from .user import User
 
-def register_routes(bp, service):
+def register_routes(bp, socketio, service):
     # xrepo=Repo()
     # service=Service(xrepo)
     # service.add_examples()
@@ -210,3 +212,8 @@ def register_routes(bp, service):
     def commit_to_db():
         service.commit_to_db()
         return {}
+    
+
+    # @socketio.on('message')
+    # def 
+    

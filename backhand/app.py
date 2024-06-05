@@ -6,9 +6,12 @@ from backhand import create_app
 testing=True
 
 if __name__=="__main__":
-    app=create_app()
+    app, socketio=create_app()
     # if testing:
     #     from test_service_founder import run
     #     run()
         # unittest.main()
-    app.run(debug=True)
+
+
+    socketio.run(app=app, debug=True)
+    # app.run(debug=True)

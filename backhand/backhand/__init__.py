@@ -11,9 +11,12 @@ from flask import jsonify, session, request, redirect, url_for
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity, get_jwt
 from flask_bcrypt import bcrypt
 
+from flask_socketio import SocketIO
+
 
 db=SQLAlchemy() if 'db' not in locals() else db
 jwt=JWTManager() if 'jwt' not in locals() else jwt
+socketio=SocketIO() if 'socketio' not in locals() else socketio
 
 from .cruds.user import User
 
@@ -32,10 +35,11 @@ def create_app():
     from backhand.cruds.service import Service
     # app.register_blueprint(bp)
     jwt.init_app(app=app)
+    socketio.init_app(app=app)
 
     xrepo=Repo(db)
     service=Service(xrepo)
-    register_routes(app,service)
+    register_routes(app,socketio, service)
 
     migrate=Migrate(app, db)
 
@@ -73,6 +77,4 @@ def create_app():
         return {'registerd'}
         return {'registerd'},401
 
-
-
-    return app
+    return app, socketio
