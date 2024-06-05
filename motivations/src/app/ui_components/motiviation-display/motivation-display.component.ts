@@ -11,8 +11,8 @@ import { RouterTestingModule } from '@angular/router/testing';
     // RouterTestingModule
   ],
   template:`
-    <h2> {{motivation.name | uppercase}} </h2>
-    <span> Strength : {{motivation.strength}} </span>
+    <td> {{motivation.name | uppercase}} </td>
+    <td> Strength : {{motivation.strength}} </td>
   `,
   styleUrl: './motivation-display.component.css'
 })

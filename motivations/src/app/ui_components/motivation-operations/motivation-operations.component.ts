@@ -10,16 +10,11 @@ import {RouterLink} from "@angular/router";
   standalone: true,
   imports: [MotivationDisplayComponent, FormsModule, RouterLink],
   template: `
-    <div>
-      <app-motiviation-display [motivation]="motivation"></app-motiviation-display>
-    </div>
-    <a routerLink="/update/{{motivation.id}}">
-      <button> Update </button>
-    </a>
-    <a routerLink="/details/{{motivation.id}}">
-      <button> Details </button>
-    </a>
-    <button (click)="remove()" > REMOVE</button>
+      <!-- <app-motiviation-display [motivation]="motivation"></app-motiviation-display> -->
+      <a routerLink="/update/{{motivation.id}}"> <button> Update </button> </a>
+      <a routerLink="/details/{{motivation.id}}"> <button> Details </button> </a>
+      <button (click)="remove()" > REMOVE</button>
+      <br>
   ` ,
   styleUrl: './motivation-operations.component.css'
 })
@@ -31,9 +26,9 @@ export class MotivationOperationsComponent implements MihhObserver{
   }
   remove(){
     this.service.remove(this.motivation.id).then((response)=>{
-      this.service.notify()
+      this.service.notifyObservers()
     })
   }
-  notify() {
+  notifyChange() {
   }
 }

@@ -10,9 +10,11 @@ import {MotivationService} from "../../services/motivation.service";
     RouterLink,
   ],
   template: `
-    <a routerLink="">
-      <h1> MOTIVATIONS </h1>
-    </a>
+    <h1>
+      <a routerLink="">
+        MOTIVATIONS
+      </a>
+    </h1>
   `,
   styleUrl: './home-bar.component.css'
 })

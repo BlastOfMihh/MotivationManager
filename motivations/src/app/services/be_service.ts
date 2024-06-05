@@ -9,8 +9,8 @@ import { IPage } from "../domain/page";
 
 export class BEService implements IMotivationService{
   filter_name:string=""
-  //base_url="http://127.0.0.1:5000"
-  base_url="https://mihh-qrpw2zrfcq-oe.a.run.app"
+  base_url="http://127.0.0.1:5000"
+  // base_url="https://mihh-qrpw2zrfcq-oe.a.run.app"
   get_all_url=this.base_url+"/get/all"
   get_url=this.base_url+"/get/"
   remove_url=this.base_url+"/remove"

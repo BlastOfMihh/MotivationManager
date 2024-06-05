@@ -43,6 +43,6 @@ export class DetailsPageComponent implements MihhObserver{
 
     })
   }
-  notify(): void {
+  notifyChange(): void {
   }
 }

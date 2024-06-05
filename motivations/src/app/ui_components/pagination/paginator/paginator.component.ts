@@ -8,6 +8,7 @@ import {MotivationOperationsComponent} from "../../motivation-operations/motivat
 import {SortButtonComponent} from "../../sort-button/sort-button.component";
 import {FormsModule} from "@angular/forms";
 import { HttpClient } from '@angular/common/http';
+import { BarchartComponent } from '../../barchart/barchart.component';
 
 
 @Component({
@@ -15,17 +16,27 @@ import { HttpClient } from '@angular/common/http';
   standalone: true,
   imports: [NgFor, CommonModule, NgForOf, MotivationDisplayComponent, MotivationOperationsComponent, SortButtonComponent, FormsModule ],
   template: `
-    <div class="paginator">
-      <div *ngFor="let element of currentElements">
-        <app-motivation-operations [motivation]="element" ></app-motivation-operations>
-      </div>
-      <select (change)="updatePageSize()" [(ngModel)]="pageSize">
-        <option *ngFor="let nr of pageSizes"> {{nr}}</option>
-      </select>
-      <button (click)="turnBackPage()"> Previous </button>
-      <button> {{currentPageIndex}} / {{totalPageIndex}}</button>
-      <button (click)="turnPage()"> Next </button>
-    </div>
+    <table>
+      <tr>
+        <th> Name </th>
+        <th> Strength </th>
+        <th> </th>
+      </tr>
+      <tr *ngFor="let element of currentElements">
+        <td [textContent]="element.name | uppercase"> </td>
+        <td [textContent]="element.strength"> </td>
+        <td>
+          <app-motivation-operations [motivation]="element" ></app-motivation-operations>
+        </td>
+      </tr>
+    </table>
+
+    <button (click)="turnBackPage()"> Previous </button>
+    {{currentPageIndex}} / {{totalPageIndex}}
+    <button (click)="turnPage()"> Next </button>
+    <select (change)="updatePageSize()" [(ngModel)]="pageSize">
+      <option *ngFor="let nr of pageSizes"> {{nr}}</option>
+    </select>
   `,
   styleUrl: './paginator.component.css'
 })
@@ -45,7 +56,7 @@ export class PaginatorComponent implements MihhObserver{
     this.updateCurrentElements()
     // this.
   }
-  notify() {
+  notifyChange() {
     this.updateCurrentElements()
   }
   turnPage(){

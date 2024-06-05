@@ -10,12 +10,12 @@ import { asapScheduler } from 'rxjs';
   imports: [OnlineStatusModule],
   template:`
     <button (click)="update()"> check network status </button>
-    NETWORK STATUS {{salut}}
+    {{salut}}
   `,
   styleUrl: './network-status-checker.component.css'
 })
 export class NetworkStatusCheckerComponent {
-  salut:string="_"
+  salut:string=""
   update(){
     let online=new OnlineStatusService()
     if (online.getStatus()==OnlineStatusType.ONLINE)

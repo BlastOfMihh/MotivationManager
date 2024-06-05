@@ -1,5 +1,5 @@
 import {Component, inject} from '@angular/core';
-import {MotivationService} from "../../services/motivation.service";
+import {MihhObserver, MotivationService} from "../../services/motivation.service";
 import {FormsModule, NgModel} from "@angular/forms";
 import { NgFor } from '@angular/common';
 import { IMotivation } from '../../domain/imotivation';
@@ -22,7 +22,7 @@ import { IMotivation } from '../../domain/imotivation';
   `,
   styleUrl: './filter.component.css'
 })
-export class FilterComponent {
+export class FilterComponent implements MihhObserver{
   service=inject(MotivationService)
   nameFilter:string=""
   strenghtOptions:Number[]=[1, 2, 3 ,4 ,5]
@@ -36,7 +36,7 @@ export class FilterComponent {
   sortByStrength(){
     this.service.filterStrength(this.strenghtFilter)
   }
-  notify(){
+  notifyChange(){
     this.service.getStrengths().then((response)=>{
       this.strenghtOptions=response
     })

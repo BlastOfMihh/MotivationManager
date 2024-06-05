@@ -17,14 +17,14 @@ export class MihhObservable{
   register(observer:MihhObserver){
     this.registeredObjects.push(observer)
   }
-  notify(){
+  notifyObservers(){
     for(let i=0; i<this.registeredObjects.length; ++i){
-      this.registeredObjects[i].notify()
+      this.registeredObjects[i].notifyChange()
     }
   }
 }
 export class MihhObserver{
-  notify(){
+  notifyChange(){
   };
 }
 
@@ -36,8 +36,8 @@ export class MotivationService extends MihhObservable implements IMotivationServ
   wrapperService:DualService
   frontEndService:IMotivationService
   backEndService:IMotivationService
-  //base_url="http://127.0.0.1:5000"
-  base_url="https://mihh-qrpw2zrfcq-oe.a.run.app"
+  base_url="http://127.0.0.1:5000"
+  // base_url="https://mihh-qrpw2zrfcq-oe.a.run.app"
   constructor(){
     super()
     this.backEndService=new BEService()
@@ -74,7 +74,7 @@ export class MotivationService extends MihhObservable implements IMotivationServ
   remove(remove_id: number): Promise<void> {
     return new Promise<void>((accept, reject)=>{
       this.wrapperService.remove(remove_id).then((response)=>{
-        this.notify()
+        this.notifyObservers()
         accept(response)
       })
     })
@@ -89,7 +89,7 @@ export class MotivationService extends MihhObservable implements IMotivationServ
   add(strength_: number, name_: string): Promise<IMotivation> {
     return new Promise<IMotivation>((accept, reject)=>{
       this.wrapperService.add(strength_, name_).then((response)=>{
-        this.notify()
+        this.notifyObservers()
         accept(response)
       })
     })
@@ -97,7 +97,7 @@ export class MotivationService extends MihhObservable implements IMotivationServ
   update(id_: number, strength_: number, name_: string): Promise<void> {
     return new Promise<void>((accept, reject)=>{
       this.wrapperService.update(id_, strength_, name_).then((response)=>{
-        this.notify()
+        this.notifyObservers()
         accept(response)
       }).catch((reason)=>{
         reject(reason)

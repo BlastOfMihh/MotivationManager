@@ -38,7 +38,7 @@ export class UpdateComponent implements MihhObserver{
     })
 
   }
-  notify(){
+  notifyChange(){
 
   }
   update(){

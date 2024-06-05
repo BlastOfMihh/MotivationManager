@@ -9,9 +9,9 @@ import {FormsModule} from "@angular/forms";
   imports: [FormsModule],
   template:`
     <h1> LOGIN pls</h1>
-    Enter username : <input [(ngModel)]="user.username">
+    USERNAME : <input [(ngModel)]="user.username">
     <br>
-    Enter password : <input [(ngModel)]="user.password">
+    PASSWORD : <input type="password" [(ngModel)]="user.password">
     <br>
     <button (click)="this.login()"> enter the matrix</button>
   `,

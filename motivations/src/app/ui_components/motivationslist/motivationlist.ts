@@ -10,21 +10,23 @@ import {PaginatorComponent} from "../pagination/paginator/paginator.component";
 import {FilterComponent} from "../filter/filter.component";
 import { SortButtonComponent } from '../sort-button/sort-button.component';
 import { NetworkStatusCheckerComponent } from '../../network-status-checker/network-status-checker.component';
+import { BarchartComponent } from '../barchart/barchart.component';
 
 @Component({
   selector: 'app-motivationslist',
   standalone: true,
-  imports: [NetworkStatusCheckerComponent,MotivationDisplayComponent, NgFor, MotivationOperationsComponent, AddMotivationComponent, RouterLink, PaginatorComponent, FilterComponent, SortButtonComponent],
+  imports: [BarchartComponent,NetworkStatusCheckerComponent,MotivationDisplayComponent, NgFor, MotivationOperationsComponent, AddMotivationComponent, RouterLink, PaginatorComponent, FilterComponent, SortButtonComponent],
   template: `
     <a routerLink="/add"> <button> Add </button> </a>
+    <app-paginator></app-paginator>
     <br>
-    <app-network-status-checker> </app-network-status-checker>
+    <br>
+    <app-barchart></app-barchart>
     <br>
     <app-filter> </app-filter>
     <br>
-    <app-sort-button></app-sort-button>
-    <br>
-    <app-paginator></app-paginator>
+    <app-network-status-checker> </app-network-status-checker>
+    <!-- <app-sort-button></app-sort-button> -->
     <!-- <a routerLink="/barchart"> <button> Barchart </button> <a> -->
 
 <!--    <div *ngFor="let motivation of motivations">-->

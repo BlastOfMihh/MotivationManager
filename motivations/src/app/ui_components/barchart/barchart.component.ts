@@ -1,7 +1,7 @@
 import {Component, inject} from '@angular/core';
 import { AgChartsAngular } from 'ag-charts-angular';
 import { AgChartOptions } from 'ag-charts-community';
-import {MotivationService} from "../../services/motivation.service";
+import {MihhObserver, MotivationService} from "../../services/motivation.service";
 import {Observer} from "rxjs";
 import {IMotivation} from "../../domain/imotivation";
 
@@ -13,7 +13,7 @@ import {IMotivation} from "../../domain/imotivation";
    </ag-charts-angular>`,
   styleUrl: './barchart.component.css'
 })
-export class BarchartComponent {
+export class BarchartComponent implements MihhObserver{
   public chartOptions: AgChartOptions;
   service=inject(MotivationService)
   motivations:IMotivation[]=[]
@@ -31,7 +31,7 @@ export class BarchartComponent {
       };
     })
   }
-  notify(){
+  notifyChange(){
     // this.motivations=this.service.getAll()
     this.update()
   }

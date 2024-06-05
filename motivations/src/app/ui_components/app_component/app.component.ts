@@ -19,9 +19,12 @@ import { BrowserModule } from '@angular/platform-browser';
   imports: [RouterOutlet, MotivationOperationsComponent, MotivationDisplayComponent, Motivationlist, HomeBarComponent, BarchartComponent, FilterComponent, HttpClientModule ],
   template: `
     <div style="text-align: center">
+      <br>
+      <br>
+      <br>
       <app-home-bar></app-home-bar>
+      <br>
       <router-outlet></router-outlet>
-      <app-barchart></app-barchart>
     </div>
     `,
   styleUrl: './app.component.css'
