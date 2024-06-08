@@ -214,3 +214,12 @@ def register_routes(bp, socketio, service):
             pass
         return 404
     
+    @bp.route("/users", methods=['GET'])
+    def get_all_users():
+        try:
+            page = request.args.get('page', 1, type=int)
+            per_page = request.args.get('per_page', 10, type=int)
+            users = service.get_all_users(page, per_page)
+            return [user.to_dict() for user in users.items], 200
+        except Exception as e:
+            return str(e), 500

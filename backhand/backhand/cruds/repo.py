@@ -98,3 +98,8 @@ class Repo:
         if user is not None:
             self.db.session.delete(user)
             self.db.session.commit()
+
+
+def get_all_users(self, page=1, per_page=10):
+    users = self.db.session.query(User).paginate(page, per_page, error_out=False)
+    return users 

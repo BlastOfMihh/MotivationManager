@@ -172,3 +172,6 @@ class Service:
             "username": user.username,
             "email": user.email,
         }
+
+    def get_all_users(self, page=1, per_page=10):
+        return self.xrepo.get_all_users(page, per_page)
