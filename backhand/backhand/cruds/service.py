@@ -2,6 +2,7 @@ from .repo import Repo
 from .motivation import Motivation
 from .founder import Founder
 from .validator import Validator
+from .user import User
 
 from faker import Faker
 
@@ -72,7 +73,7 @@ class Service:
         right_index=min(left_index+size, len(all))
         page=all[left_index:right_index]
         max_len=len(all)//size+(1 if len(all)%size==0 else 0)
-        return page,left_index//size
+        return page,left_index//size,len(all)
     
     def get_founders_by_motivation_id(self, id):
         return self.xrepo.get_founders_by_motivation_id(id)
@@ -152,4 +153,22 @@ class Service:
 
     def founder_get_all(self):
         return self.xrepo.founder_get_all()
-        
+
+
+    def user_add(self, username, user_type, is_active, password):
+        new_user = User(username, user_type, is_active, password)
+        self.xrepo.add(new_user)
+    
+    def user_remove(self, id):
+        self.xrepo.user_remove(id)
+
+    def user_update(self, id, username, password, email):
+        updated_user = User(id, username, password, email)
+        self.xrepo.user_update(id, updated_user)
+
+    def user_get(self, id):
+        user = self.xrepo.user_get(id)
+        return {
+            "username": user.username,
+            "email": user.email,
+        }

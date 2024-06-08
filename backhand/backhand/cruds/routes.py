@@ -9,29 +9,11 @@ from flask import jsonify, session, request, redirect, url_for
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity, get_jwt
 from flask_bcrypt import bcrypt
 
-from flask_socketio import send
+from flask_socketio import send, emit
 
 # from .user import User
 
 def register_routes(bp, socketio, service):
-    # xrepo=Repo()
-    # service=Service(xrepo)
-    # service.add_examples()
-    # @bp.route('/login', methods=['POST'])
-    # def login():
-    #     data = request.get_json()
-    #     username = data['username']
-    #     password = data['password']
-    #     print('Received data:', username , password)
-
-    #     user = User.query.filter_by(username=username).first()
-
-    #     if user and bcrypt.check_password_hash(user.password, password):
-    #         access_token = create_access_token(identity=user.id)
-    #         return {'message': 'Login Success', 'access_token': access_token}
-    #     else:
-    #         return {'message': 'Login Failed'}, 401
-    
     @bp.route('/ping', methods=['GET'])
     def ping():
         if request.method=='GET':
@@ -59,6 +41,7 @@ def register_routes(bp, socketio, service):
         if request.method=='POST':
             try:
                 motivation_dict = service.add( request.get_json() )
+                emit_client_refresh()
                 return motivation_dict
             except InvalidMotivation as e:
                 for err in e.args[0]:
@@ -71,6 +54,7 @@ def register_routes(bp, socketio, service):
             try:
                 delete_id=request.get_json()["id"]
                 service.remove(delete_id)
+                emit_client_refresh()
                 return {}
             except Exception as e:
                 return str(e)
@@ -97,11 +81,8 @@ def register_routes(bp, socketio, service):
         if request.method=='PUT':
             id=int(id)
             response = service.update(id, request.get_json())
+            emit_client_refresh()
             return response.to_dict()
-            # try:
-            #     service.update(int(id), request.get_json())
-            # except Exception as e:
-            #     return str(e)
 
     @bp.route('/page', methods=['POST'])
     @jwt_required()
@@ -121,36 +102,24 @@ def register_routes(bp, socketio, service):
                         strength_key=None
                 if "sort_by_name" in data_json.keys():
                     sort_by_name = bool(data_json["sort_by_name"])
-                page, actual_index=service.get_filter_page(page_index, page_size, name_key, strength_key, sort_by_name)
+                page, actual_index, max_page_size=service.get_filter_page(page_index, page_size, name_key, strength_key, sort_by_name)
                 page=[ x.to_dict() for x in page]
                 return {
                     "elements" : page,
-                    "index": actual_index
+                    "index": actual_index,
+                    "max_page_size":max_page_size
                 }
             except Exception as e:
                 return str(e)
         return 404
 
-    @bp.route("/filter/strength", methods=['PUT'])
-    def filter_strength():
-        if request.method=='PUT':
-            try:
-                filter_key=int(request.get_json()["strength_key"])
-                print(filter_key)
-                service.set_strenght_filter(filter_key)
-                return {}
-            except Exception as e:
-                return str(e)
-        return 402
-
-    @bp.route("/get/strengths", methods=['GET'])
-    def get_strengths():
-        if request.method=='GET':
-            ss=service.get_strenghts()
-            return list(ss)
-        return 402
+    # @bp.route("/get/strengths", methods=['GET'])
+    # def get_strengths():
+    #     if request.method=='GET':
+    #         ss=service.get_strenghts()
+    #         return list(ss)
+    #     return 402
     
-
     @bp.route("/founder/<id>", methods=['GET'])
     def get_founder_id(id):
         if request.method=='GET':
@@ -213,7 +182,35 @@ def register_routes(bp, socketio, service):
         service.commit_to_db()
         return {}
     
+    @bp.route("/chart_data", methods=['GET'])
+    def get_chart_data():
+        if request.method=='GET':
+            entities=service.get_all()
+            ans={}
+            for entity in entities:
+                if entity.strength not in ans.keys():
+                    ans[entity.strength]=0
+                ans[entity.strength]+=1
+            return sorted(
+                [ {'strength':strength, 'count':ans[strength]} for strength in ans.keys()], 
+                key=lambda d : d['strength']
+            )
 
-    # @socketio.on('message')
-    # def 
+    def emit_client_refresh():
+        socketio.emit("refresh", "refreshhh")
+
+    # @bp.route("/user", methods=['POST'])
+    # def add_user():
+    #     try:
+    #         data_json=request.get_json()
+    #     except Exception as e:
+    #         pass
+    #     return 404
+    @bp.route("/user<id>", methods=['delete'])
+    def remove_user(id):
+        try:
+            service.user_remove(int(id))
+        except Exception as e:
+            pass
+        return 404
     

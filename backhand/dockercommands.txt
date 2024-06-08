@@ -2,4 +2,5 @@
 
 
 docker build . -t be_mihh
+docker tag be_mihh europe-west10-docker.pkg.dev/mihh-mpp/be-mpp-mihh/mihh
 docker push europe-west10-docker.pkg.dev/mihh-mpp/be-mpp-mihh/mihh

@@ -1,8 +1,6 @@
 from backhand import create_app
 # run_tests()
 
-
-
 testing=True
 
 if __name__=="__main__":
@@ -13,5 +11,5 @@ if __name__=="__main__":
         # unittest.main()
 
 
-    socketio.run(app=app, debug=True)
+    socketio.run(app=app, debug=True, allow_unsafe_werkzeug=True)
     # app.run(debug=True)

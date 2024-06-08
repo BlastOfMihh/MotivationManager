@@ -1,6 +1,7 @@
 from .motivation import Motivation
 from .founder import Founder
 from faker import Faker
+from .user import User
 
 class Repo:
     def __init__(self, db) -> None:
@@ -70,3 +71,30 @@ class Repo:
     def get_founders_by_motivation_id(self, id):
         founders = Founder.query.filter(Founder.motivation_id ==id)
         return founders
+    
+
+    #users code
+    def add_user(self, user):
+        self.db.session.add(user)
+        self.db.session.commit()
+
+    def get_user(self, id):
+        try:
+            user = self.db.session.query(User).filter(User.id == id).one()
+            return user
+        except Exception:
+            return None
+
+    def update_user(self, id, updated_user):
+        user = self.get_user(id)
+        if user is not None:
+            user.username = updated_user.username
+            user.password = updated_user.password
+            user.email = updated_user.email
+            self.db.session.commit()
+
+    def delete_user(self, id):
+        user = self.get_user(id)
+        if user is not None:
+            self.db.session.delete(user)
+            self.db.session.commit()

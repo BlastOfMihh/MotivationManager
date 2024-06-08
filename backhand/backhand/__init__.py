@@ -16,7 +16,7 @@ from flask_socketio import SocketIO
 
 db=SQLAlchemy() if 'db' not in locals() else db
 jwt=JWTManager() if 'jwt' not in locals() else jwt
-socketio=SocketIO() if 'socketio' not in locals() else socketio
+socketio=SocketIO(cors_allowed_origins="*") if 'socketio' not in locals() else socketio
 
 from .cruds.user import User
 
