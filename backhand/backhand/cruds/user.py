@@ -8,13 +8,6 @@ class User(db.Model, UserMixin):
     user_type = db.Column(db.Text, nullable=False)
     is_active = db.Column(db.Boolean, default=True)
     password = db.Column(db.Text, nullable=False)
-    # from tutorial:
-    # cart = db.Column(JSON, nullable=True, default=list)  # Make cart nullable
-
-    # # Define the relationship between User and CartProducts
-    # cart_products = relationship('CartProducts', backref="user", lazy="dynamic")
-    # # Define the relationship between User and Wishlists
-    # wishlists = db.relationship('Wishlists', backref='user', lazy=True)
 
     def __init__(self, username, user_type, is_active, password):
         self.username=username

@@ -66,6 +66,8 @@ class Service:
         return set([motivation.strength for motivation in self.xrepo.get_all()])
 
     def get_page(self, index, size, all=None):
+        # page = self.xrepo.get_motivations_page(self, index, size)
+        # return page,1,100
         if all is None:
             all=self.get_all()
         index=max(index,0)
@@ -162,8 +164,8 @@ class Service:
     def user_remove(self, id):
         self.xrepo.user_remove(id)
 
-    def user_update(self, id, username, password, email):
-        updated_user = User(id, username, password, email)
+    def user_update(self, id, username, user_type, is_active, password):
+        updated_user = User(username, user_type, is_active, password)
         self.xrepo.user_update(id, updated_user)
 
     def user_get(self, id):

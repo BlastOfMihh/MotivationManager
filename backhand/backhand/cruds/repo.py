@@ -43,11 +43,17 @@ class Repo:
 
     def get(self, id):
         return Motivation.query.filter_by(_id=id).first()
+
     def founder_get(self, id):
         return Founder.query.filter_by(_id=id).first()
 
     def get_all(self):
         return Motivation.query.all()
+
+    def get_motivations_page(self, page, per_page):
+        users_page = self.db.paginate(self.db.select(Motivation))
+        return users_page
+
     def founder_get_all(self):
         return Founder.query.all()
     
@@ -71,7 +77,6 @@ class Repo:
     def get_founders_by_motivation_id(self, id):
         founders = Founder.query.filter(Founder.motivation_id ==id)
         return founders
-    
 
     #users code
     def add_user(self, user):
@@ -85,21 +90,28 @@ class Repo:
         except Exception:
             return None
 
-    def update_user(self, id, updated_user):
-        user = self.get_user(id)
+    def user_update(self, id, updated_user):
+        user = User.query.filter_by(_id=id).first()
         if user is not None:
-            user.username = updated_user.username
-            user.password = updated_user.password
-            user.email = updated_user.email
+            if updated_user.username is not None:
+                user.username = updated_user.username
+            if updated_user.password is not None:
+                user.password = updated_user.password
+            if updated_user.is_active is not None:
+                user.is_active = updated_user.is_active
+            if updated_user.user_type is not None:
+                user.user_type = updated_user.user_type
             self.db.session.commit()
 
-    def delete_user(self, id):
-        user = self.get_user(id)
-        if user is not None:
-            self.db.session.delete(user)
-            self.db.session.commit()
+    def user_remove(self, id):
+        User.query.filter(User._id==id).delete()
+        self.db.session.commit()
+        # user = self.get_user(id)
+        # if user is not None:
+        #     self.db.session.delete(user)
+        #     self.db.session.commit()
 
-
-def get_all_users(self, page=1, per_page=10):
-    users = self.db.session.query(User).paginate(page, per_page, error_out=False)
-    return users 
+    def get_all_users(self, page=1, per_page=10):
+        # users_page = self.db.paginate(self.db.select(User).where(User.user_type!="admin"))
+        users_page = self.db.paginate(self.db.select(User))
+        return users_page

@@ -1,15 +1,26 @@
 from backhand import db
 from .motivation import Motivation
 from sqlalchemy import ForeignKey
-from sqlalchemy.orm import relationship
+
+from sqlalchemy.orm import Mapped, mapped_column, relationship, DeclarativeBase
+from sqlalchemy import String, DateTime, ForeignKey, Boolean, Text
 
 class Founder(db.Model):
     __tablename__='Founders'
 
-    _id=db.Column(db.Integer, primary_key=True)
-    motivation_id=db.Column(db.Integer, ForeignKey("motivations._id"), nullable=False)
-    name=db.Column(db.Text, nullable=False)
-    email=db.Column(db.Text, nullable=False)
+    # _id=db.Column(db.Integer, primary_key=True)
+    # motivation_id=db.Column(db.Integer, ForeignKey("motivations._id"), nullable=False)
+
+    # name=db.Column(db.Text, nullable=False)
+    # email=db.Column(db.Text, nullable=False)
+
+    _id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    name: Mapped[str] = mapped_column(Text, nullable=False)
+    email: Mapped[str] = mapped_column(Text, nullable=False)
+    motivation_id: Mapped[int] = mapped_column(ForeignKey("motivations.id"))
+
+    book: Mapped["Motivation"] = relationship(back_populates="founders")
+
 
 
     def __init__(self, name:str, email:str, motivation_id:int):

@@ -11,9 +11,29 @@ from flask_bcrypt import bcrypt
 
 from flask_socketio import send, emit
 
+from .user_types import UserTypes
+
 # from .user import User
 
 def register_routes(bp, socketio, service):
+    def manager_only_decorator(func):
+        def wrapper(*args, **kwargs):
+            invoker=get_jwt_identity()
+            if str(invoker['user_type']) in [str(UserTypes.ADMIN.value[0]), str(UserTypes.MANAGER.value[0])]:
+                return func(*args, **kwargs)
+            return "User is not an Managaer", 442
+        wrapper.__name__ = func.__name__
+        return wrapper
+
+    def admin_only_decorator(func):
+        def wrapper(*args, **kwargs):
+            invoker=get_jwt_identity()
+            if str(invoker['user_type'])==str(UserTypes.ADMIN.value[0]):
+                return func(*args, **kwargs)
+            return "User is not an Admin", 443
+        wrapper.__name__ = func.__name__
+        return wrapper
+
     @bp.route('/ping', methods=['GET'])
     def ping():
         if request.method=='GET':
@@ -31,17 +51,19 @@ def register_routes(bp, socketio, service):
                 return str(e)
 
     @bp.route('/get/all', methods=['GET'])
-    # @jwt_required()
+    @jwt_required()
     def get_all():
         if request.method=='GET':
             return service.get_all_dict()
 
     @bp.route('/add', methods=['POST'])
+    @jwt_required()
+    @manager_only_decorator
     def add():
         if request.method=='POST':
             try:
                 motivation_dict = service.add( request.get_json() )
-                emit_client_refresh()
+                emit_motivations_refresh()
                 return motivation_dict
             except InvalidMotivation as e:
                 for err in e.args[0]:
@@ -49,12 +71,14 @@ def register_routes(bp, socketio, service):
                 return str(e)
 
     @bp.route('/remove', methods=['DELETE'])
+    @jwt_required()
+    @manager_only_decorator
     def remove():
         if request.method=='DELETE':
             try:
                 delete_id=request.get_json()["id"]
                 service.remove(delete_id)
-                emit_client_refresh()
+                emit_motivations_refresh()
                 return {}
             except Exception as e:
                 return str(e)
@@ -77,11 +101,12 @@ def register_routes(bp, socketio, service):
 
     @bp.route('/update/<id>', methods=['PUT'])
     @jwt_required()
+    @manager_only_decorator
     def update(id):
         if request.method=='PUT':
             id=int(id)
             response = service.update(id, request.get_json())
-            emit_client_refresh()
+            emit_motivations_refresh()
             return response.to_dict()
 
     @bp.route('/page', methods=['POST'])
@@ -121,6 +146,7 @@ def register_routes(bp, socketio, service):
     #     return 402
     
     @bp.route("/founder/<id>", methods=['GET'])
+    @jwt_required()
     def get_founder_id(id):
         if request.method=='GET':
             try:
@@ -129,6 +155,8 @@ def register_routes(bp, socketio, service):
                 return str(e), 404 
     
     @bp.route("/founder", methods=['POST'])
+    @jwt_required()
+    @manager_only_decorator
     def founder_add():
         if request.method=='POST':
             try:
@@ -144,6 +172,8 @@ def register_routes(bp, socketio, service):
                 return {"error":str(e)}, 404
             
     @bp.route("/founder", methods=['DELETE'])
+    @jwt_required()
+    @manager_only_decorator
     def founder_remove():
         if request.method=='DELETE':
             try:
@@ -155,6 +185,8 @@ def register_routes(bp, socketio, service):
         return {}, 404
 
     @bp.route("/founder", methods=['PUT'])
+    @jwt_required()
+    @manager_only_decorator
     def founder_update():
         if request.method=="PUT":
             try:
@@ -169,6 +201,7 @@ def register_routes(bp, socketio, service):
                 return str(e), 404
     
     @bp.route("/motivation/founders/<id>", methods=['GET'])
+    @jwt_required()
     def get_founder_by_motivation_id(id):
         if request.method=='GET':
             try:
@@ -183,6 +216,7 @@ def register_routes(bp, socketio, service):
         return {}
     
     @bp.route("/chart_data", methods=['GET'])
+    @jwt_required()
     def get_chart_data():
         if request.method=='GET':
             entities=service.get_all()
@@ -196,8 +230,11 @@ def register_routes(bp, socketio, service):
                 key=lambda d : d['strength']
             )
 
-    def emit_client_refresh():
+    def emit_motivations_refresh():
         socketio.emit("refresh", "refreshhh")
+
+    def emit_users_refresh():
+        socketio.emit("refresh-users", "refreshhh")
 
     # @bp.route("/user", methods=['POST'])
     # def add_user():
@@ -207,19 +244,64 @@ def register_routes(bp, socketio, service):
     #         pass
     #     return 404
     @bp.route("/user<id>", methods=['delete'])
+    @jwt_required()
+    @admin_only_decorator
     def remove_user(id):
         try:
             service.user_remove(int(id))
         except Exception as e:
             pass
         return 404
-    
+
     @bp.route("/users", methods=['GET'])
+    @jwt_required()
+    @admin_only_decorator
     def get_all_users():
         try:
             page = request.args.get('page', 1, type=int)
             per_page = request.args.get('per_page', 10, type=int)
             users = service.get_all_users(page, per_page)
             return [user.to_dict() for user in users.items], 200
+        except Exception as e:
+            return str(e), 500
+
+    @bp.route("/users/<id>", methods=['DELETE'])
+    @jwt_required()
+    @admin_only_decorator
+    def user_remove(id):
+        try:
+            service.user_remove(id)
+            emit_users_refresh()
+            return {"id":id}, 200
+        except Exception as e:
+            return str(e), 500
+        
+    @bp.route("/users/<id>", methods=['GET'])
+    @jwt_required()
+    @admin_only_decorator
+    def user_get(id):
+        try:
+            service.user_get(id)
+            return {"id":id}, 200
+            return "User is not an admin", 400
+        except Exception as e:
+            return str(e), 500
+        
+    @bp.route("/users", methods=['PUT'])
+    @jwt_required()
+    @admin_only_decorator
+    def user_update():
+        print("Updating users")
+        try:
+        # if True:
+            user_json=request.get_json()
+            # username = user_json["username"]
+            # is_active = bool(user_json["is_active"])
+            id=user_json["id"]
+            user_type = user_json["user_type"]
+            service.user_update(id, None, user_type, None, None)
+            emit_users_refresh()
+            return {}, 200
+            return "User is not an admin", 400
         except Exception as e:
             return str(e), 500

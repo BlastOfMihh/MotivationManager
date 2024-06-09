@@ -3,7 +3,7 @@ from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 
-from backhand.cruds.routes import register_routes
+from backhand.cruds.controller import register_routes
 from backhand.cruds import bp 
 
 
@@ -54,8 +54,18 @@ def create_app():
         user = User.query.filter_by(username=username).first()
 
         if user : #and bcrypt.check_password_hash(user.password, password):
-            access_token = create_access_token(identity=user._id)
-            return {'message': 'Login Success', 'access_token': access_token}
+            access_token = create_access_token(
+                identity=
+                {
+                    "id":user._id,
+                    "user_type":user.user_type
+                })
+            return {
+                'message': 'Login Success', 
+                'access_token': access_token,
+                'username':user.username,
+                'user_type':user.user_type
+            }
         else:
             return {'message': 'Login Failed'}, 401
     
