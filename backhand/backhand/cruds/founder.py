@@ -17,11 +17,9 @@ class Founder(db.Model):
     _id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     name: Mapped[str] = mapped_column(Text, nullable=False)
     email: Mapped[str] = mapped_column(Text, nullable=False)
-    motivation_id: Mapped[int] = mapped_column(ForeignKey("motivations.id"))
+    motivation_id: Mapped[int] = mapped_column(ForeignKey("motivations._id"))
 
-    book: Mapped["Motivation"] = relationship(back_populates="founders")
-
-
+    # motivation: Mapped["Founder"] = relationship(back_populates="founders")
 
     def __init__(self, name:str, email:str, motivation_id:int):
         self.name=name
