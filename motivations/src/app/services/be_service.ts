@@ -39,7 +39,11 @@ export class BEService implements IMotivationService{
   }
 
   setStatus(){
-    axios.get(this.base_url+"/ping").then((response) => {
+    axios.get(this.base_url+"/ping",
+        {headers: {
+          Authorization: `Bearer ${localStorage.getItem('jwt_token')}`
+        }}
+    ).then((response) => {
         this.status=this.STATUS_ON
     }).catch((error) => {
         this.status=this.STATUS_OFF
@@ -55,7 +59,11 @@ export class BEService implements IMotivationService{
 
   async getAll(): Promise<IMotivation[]> {
     return new Promise<IMotivation[]>((resolve, reject) => {
-      axios.get(this.get_all_url)
+      axios.get(this.get_all_url,
+        {headers: {
+          Authorization: `Bearer ${localStorage.getItem('jwt_token')}`
+        }}
+      )
         .then((response) => {
           resolve(response.data);
         })
@@ -97,9 +105,11 @@ export class BEService implements IMotivationService{
         {
           "index": index,
           "size": size,
+          "name_key": name_key,
           "strength_key": strength_key,
           "sort_by_name": sort_by_name
-        },
+        }
+        ,
         {headers: {
           Authorization: `Bearer ${localStorage.getItem('jwt_token')}`
         }}
@@ -123,7 +133,12 @@ export class BEService implements IMotivationService{
       axios.delete(this.remove_url, {
         data: {
           "id": remove_id
+        },
+          
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('jwt_token')}`
         }
+          
       })
       .then((response) => {
         resolve();
@@ -141,7 +156,12 @@ export class BEService implements IMotivationService{
       strength:0
     }
     return new Promise<IMotivation>((resolve, reject) => {
-      axios.get(this.base_url+"/get/"+id).then((response)=>{
+      axios.get(this.base_url+"/get/"+id,
+        {headers: {
+          Authorization: `Bearer ${localStorage.getItem('jwt_token')}`
+        }}
+
+      ).then((response)=>{
         data.name=response.data.name
         data.strength=response.data.strength
         resolve(data);
@@ -159,13 +179,17 @@ export class BEService implements IMotivationService{
       })
     }
     else {
-      alert("oke")
       return new Promise<IMotivation>((resolve, reject) => {
         axios.post(this.add_url, {
           id: 2,
           name: name_,
           strength: strength_
-        }).then(function (response) {
+        },
+      
+        {headers: {
+          Authorization: `Bearer ${localStorage.getItem('jwt_token')}`
+        }}
+      ).then(function (response) {
           resolve(response.data);
         }).catch(function (error) {
           reject(error);
@@ -183,27 +207,48 @@ export class BEService implements IMotivationService{
       })
     }
     return axios.put(this.base_url + "/update/" + id_, {
-      id: id_,
-      strength: strength_,
-      name: name_
-    });
+        id: id_,
+        strength: strength_,
+        name: name_
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('jwt_token')}`
+        }
+      }
+    );
   }
   async sort(): Promise<void> {
     this.setStatus()
-    return axios.put(this.base_url + "/sort")
+    return axios.put(this.base_url + "/sort",
+
+        {headers: {
+          Authorization: `Bearer ${localStorage.getItem('jwt_token')}`
+        }}
+
+    )
   }
   async filter(filter_name: string): Promise<void> {
     this.setStatus()
     return axios.put(this.base_url + "/filter", {
       name_filter_key: filter_name
-    })
+    },
+  
+        {headers: {
+          Authorization: `Bearer ${localStorage.getItem('jwt_token')}`
+        }}
+  )
   }
 
   filterStrength(strenght: number): Promise<void> {
     this.setStatus()
     return axios.put(this.base_url + "/filter/strength", {
       strength_key: strenght
-    })
+    },
+        {headers: {
+          Authorization: `Bearer ${localStorage.getItem('jwt_token')}`
+        }}
+  )
   }
 
   getStrengths() {
@@ -211,7 +256,13 @@ export class BEService implements IMotivationService{
     let data: number[] = [1, 2, 3]
     while (data.length > 0)
       data.pop()
-    axios.get(this.base_url + "/get/strengths").then((response) => {
+    axios.get(this.base_url + "/get/strengths",
+
+        {headers: {
+          Authorization: `Bearer ${localStorage.getItem('jwt_token')}`
+        }}
+
+    ).then((response) => {
       for (let x of response.data)
         data.push(x)
     })
@@ -219,7 +270,12 @@ export class BEService implements IMotivationService{
   }
   async getChartData():Promise<IChartDataPoint[]>{
     return new Promise((accept, reject)=>{
-      axios.get(this.base_url + "/chart_data")
+      axios.get(this.base_url + "/chart_data",
+
+        {headers: {
+          Authorization: `Bearer ${localStorage.getItem('jwt_token')}`
+        }}
+      )
       .then((response) => {
         accept( response.data)
       }).catch((reason)=>{

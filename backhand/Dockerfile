@@ -52,4 +52,4 @@ EXPOSE 5000
 # Run the application.
 # (this will run the app.py file, so you NEED the entrypoint to be named app.py)
 #CMD python3 -m flask run --host=0.0.0.0
-CMD python3 app.py
+CMD python app.py

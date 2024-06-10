@@ -27,12 +27,6 @@ import { BarchartComponent } from '../barchart/barchart.component';
     <br>
     <br>
     <app-network-status-checker> </app-network-status-checker>
-    <!-- <app-sort-button></app-sort-button> -->
-    <!-- <a routerLink="/barchart"> <button> Barchart </button> <a> -->
-
-<!--    <div *ngFor="let motivation of motivations">-->
-<!--      <app-motivation-operations [motivation]="motivation"></app-motivation-operations>-->
-<!--    </div>-->
   `,
   styleUrl: './motivationlist.component.css'
 })

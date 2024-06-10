@@ -37,7 +37,11 @@ export class LoginPageComponent {
     })
     if (response.status === 200){
       localStorage.setItem("jwt_token", response.data.access_token)
-      this.router.navigate(["/"])
+      localStorage.setItem("user_type", response.data.user_type)
+      if (response.data.user_type=='admin')
+        this.router.navigate(["/admin_panel"])
+      else
+        this.router.navigate(["/"])
     }else{
       alert("bad login attempt")
     }

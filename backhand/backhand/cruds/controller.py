@@ -18,8 +18,10 @@ from .user_types import UserTypes
 def register_routes(bp, socketio, service):
     def manager_only_decorator(func):
         def wrapper(*args, **kwargs):
+            ok_roles=[str(UserTypes.ADMIN.value[0]), str(UserTypes.MANAGER.value[0]), str(UserTypes.INVESTER.value[0])]
+            print(ok_roles)
             invoker=get_jwt_identity()
-            if str(invoker['user_type']) in [str(UserTypes.ADMIN.value[0]), str(UserTypes.MANAGER.value[0])]:
+            if str(invoker['user_type']) in ok_roles:
                 return func(*args, **kwargs)
             return "User is not an Managaer", 442
         wrapper.__name__ = func.__name__

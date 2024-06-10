@@ -13,6 +13,7 @@ import axios from 'axios';
 import { ServerUrls } from './url';
 import { ChartData } from 'chart.js';
 import { IChartDataPoint } from '../domain/chart_data';
+import { IUser } from '../domain/user';
 
 
 @Injectable({
@@ -23,6 +24,7 @@ export class MotivationService implements IMotivationService{
   frontEndService:IMotivationService
   backEndService:IMotivationService
   base_url=ServerUrls.base
+  filterNameKey=""
   constructor(){
     this.backEndService=new BEService()
     this.frontEndService=new MemoryService()
@@ -47,6 +49,7 @@ export class MotivationService implements IMotivationService{
     throw new Error('Method not implemented.');
   }
   async getPage(index:number, size:number, name_key:string, strength_key:number, sort_by_name:Boolean): Promise<IPage> {
+    name_key=this.filterNameKey
     return new Promise((resolve, reject)=>{
       this.wrapperService.getPage(index,size,name_key,strength_key,sort_by_name).then((response)=>{
         resolve(response)
@@ -88,8 +91,8 @@ export class MotivationService implements IMotivationService{
   sort(): Promise<void> {
     throw new Error('Method not implemented.');
   }
-  filter(filter_name: string): Promise<void> {
-    throw new Error('Method not implemented.');
+  async filter(filter_name: string): Promise<void> {
+    this.filterNameKey=filter_name
   }
   filterStrength(strenght: number): Promise<void> {
     throw new Error('Method not implemented.');
@@ -99,7 +102,12 @@ export class MotivationService implements IMotivationService{
   }
   async getFoudnersById(id: number): Promise<IFounder[]> {
     return new Promise<IFounder[]>((resolve, reject) => {
-      axios.get(this.base_url + "/motivation/founders/" + id).then((response) => {
+      axios.get(this.base_url + "/motivation/founders/" + id,
+        {headers: {
+          Authorization: `Bearer ${localStorage.getItem('jwt_token')}`
+        }}
+
+      ).then((response) => {
         resolve(response.data);
       }).catch((error) => {
         reject(error);
@@ -114,5 +122,54 @@ export class MotivationService implements IMotivationService{
         reject(reason)
       })
     });
+  }
+  async getUserPage(page_index:number, page_size:number):Promise<IUser[]>{
+    return new Promise((resolve, reject)=>{
+      axios.get(this.base_url + "/users", 
+        { headers: 
+          { Authorization: `Bearer ${localStorage.getItem('jwt_token')}` } }
+      ).then((response) => {
+        resolve(response.data);
+      }).catch((error) => {
+        reject(error);
+      });
+    });
+  }
+  async removeUser(id:number){
+    return new Promise((resolve, reject) => {
+      axios.delete(this.base_url + "/users/" + id, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('jwt_token')}` }
+      }).then((response) => {
+        resolve(response.data);
+      }).catch((error) => {
+        reject(error);
+      });
+    });
+  }
+  async getUser(id:number){
+    return new Promise((resolve, reject) => {
+      axios.get(this.base_url + "/users/" + id, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('jwt_token')}` }
+      }).then((response) => {
+        resolve(response.data);
+      }).catch((error) => {
+        reject(error);
+      });
+    });
+  }
+  async updateUser(id:number, user_type:string){
+    return new Promise( (resolve, reject)=>{
+      axios.put(this.base_url+"/users", {
+        id:id,
+        user_type:user_type
+      },
+      {
+        headers: { Authorization: `Bearer ${localStorage.getItem('jwt_token')}` }
+      }).then((response)=>{
+        resolve(response)
+      }).catch((reason)=>{
+        reject(reason)
+      })
+    })
   }
 }

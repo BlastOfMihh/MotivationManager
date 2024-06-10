@@ -4,16 +4,17 @@ import {FormsModule} from "@angular/forms";
 import {IMotivation} from "../../domain/imotivation";
 import {MotivationService} from "../../services/motivation.service";
 import {RouterLink} from "@angular/router";
+import { NgIf } from '@angular/common';
+import { CurrentUserService, UserType} from '../../services/current_user_service';
 
 @Component({
   selector: 'app-motivation-operations',
   standalone: true,
-  imports: [MotivationDisplayComponent, FormsModule, RouterLink],
+  imports: [MotivationDisplayComponent, FormsModule, RouterLink, NgIf],
   template: `
-      <!-- <app-motiviation-display [motivation]="motivation"></app-motiviation-display> -->
-      <a routerLink="/update/{{motivation.id}}"> <button> Update </button> </a>
+      <a *ngIf="user_service.hasWriteAcces()" routerLink="/update/{{motivation.id}}"> <button> Update </button> </a>
       <a routerLink="/details/{{motivation.id}}"> <button> Details </button> </a>
-      <button (click)="remove()" > REMOVE</button>
+      <button *ngIf="user_service.hasWriteAcces()" (click)="remove()" > REMOVE</button>
       <br>
   ` ,
   styleUrl: './motivation-operations.component.css'
@@ -21,6 +22,7 @@ import {RouterLink} from "@angular/router";
 export class MotivationOperationsComponent {
   @Input()motivation!:IMotivation
   service=inject(MotivationService)
+  user_service=inject(CurrentUserService)
   constructor(){
   }
   remove(){

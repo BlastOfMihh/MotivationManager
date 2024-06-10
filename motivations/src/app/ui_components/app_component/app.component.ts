@@ -20,9 +20,6 @@ export class SocketOne extends Socket {
   }
 }
 
-// @ts-ignore
-// @ts-ignore
-
 @Component({
   selector: 'app-root',
   standalone: true,

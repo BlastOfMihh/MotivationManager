@@ -3,4 +3,5 @@ from enum import Enum
 class UserTypes(Enum):
     ADMIN='admin',
     BASIC='basic',
-    MANAGER='manager'
+    MANAGER='manager',
+    INVESTER='invester'

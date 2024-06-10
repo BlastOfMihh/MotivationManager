@@ -11,8 +11,9 @@ import {ActivatedRoute} from "@angular/router";
     FormsModule
   ],
   template: `
-    <span> Name: </span> <input [(ngModel)]="motivation.name" type="string"> <br>
-    <span> Strength: </span> <input [(ngModel)]="motivation.strength" step=".5" min="0" max="5" type="number" >
+    <span> NAME </span> 
+    <input [(ngModel)]="motivation.name" type="string"> <br>
+    <span> STRENGTH </span> <input [(ngModel)]="motivation.strength" step=".5" min="0" max="5" type="number" >
     <br>
     <button (click)="update()"> Update </button>
   `,
@@ -25,8 +26,6 @@ export class UpdateComponent {
   service=inject(MotivationService)
   motivationId:number
   constructor(){
-    // @ts-ignore
-    this.service.register(this)
     this.motivationId=Number(this.route.snapshot.params['id']);
     if(isNaN(this.motivationId))
       this.motivationId=0
@@ -35,7 +34,6 @@ export class UpdateComponent {
       this.motivation.name=currentMotivation.name
       this.motivation.strength=currentMotivation.strength
     })
-
   }
   update(){
     try {

@@ -5,6 +5,8 @@ import {AddMotivationComponent} from "./ui_components/add-motivation/add-motivat
 import { BarchartComponent } from './ui_components/barchart/barchart.component';
 import { DetailsPageComponent } from './ui_components/details-page/details-page.component';
 import { LoginPageComponent } from './ui_components/login-page/login-page.component';
+import { AdminPanelComponent } from './admin-panel/admin-panel.component';
+import { UserUpdateComponent } from './user-update/user-update.component';
 
 export const routes: Routes = [
   {
@@ -36,6 +38,16 @@ export const routes: Routes = [
     path:'barchart',
     component:BarchartComponent,
     title:'Barchart',
+  },
+  {
+    path:'admin_panel',
+    component:AdminPanelComponent,
+    title:'ADMIN stuff',
+  },
+  {
+    path:'update_user/:id',
+    component:UserUpdateComponent,
+    title:'update user',
   }
 ];
 

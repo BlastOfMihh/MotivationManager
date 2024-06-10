@@ -21,7 +21,6 @@ export class BarchartComponent {
 
   data:IChartDataPoint[]=[]
   constructor() {
-
     this.socket.on('refresh', (data:any)=>{
       this.update()
     })

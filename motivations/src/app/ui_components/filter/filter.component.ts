@@ -12,8 +12,8 @@ import { IMotivation } from '../../domain/imotivation';
     NgFor
   ],
   template: `
-    <input [(ngModel)]="nameFilter" >
-    <button (click)="update()"> filter </button>
+    <input placeholder="filter by name" [(ngModel)]="nameFilter" (change)="filterChanged()" >
+    <!-- <button (click)="update()"> filter </button> -->
     <!-- <br> -->
     <!-- <select (change)="sortByStrength()" [(ngModel)]="strenghtFilter">
       <option *ngFor="let nr of strenghtOptions"> {{nr}}</option>
@@ -28,6 +28,9 @@ export class FilterComponent {
   strenghtOptions:Number[]=[1, 2, 3 ,4 ,5]
   strenghtFilter=4
   constructor(){
+  }
+  filterChanged(){
+    this.service.filter(this.nameFilter)
   }
   update(){
     this.service.filter(this.nameFilter)
