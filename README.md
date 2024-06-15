@@ -1,15 +1,11 @@
 # Full stack web application
-
-With all these features
-
-Lab 1
+This application was developed using Javascript with Angular for the frontend and Python with Flask for the backend. The application features: 
 - frontend caching
-- filter 
+- filtering
 - front end validation
-- charts Barchart for an easy overview
+- barcharts for an easy overview of the entities
 - UI/UX Modern User Interface
-Lab 2
-- CRUD backend ( via the orm)
+- CRUD backend (using the SqlAlchemy ORM)
 - comprehensive tests for the back end
 - back end validation
 - back end pagination
@@ -18,7 +14,6 @@ Lab 2
 - generate entities in bulk with faker
 - separate thread for faker entity generation
 - websockets
-Lab 3
 - one-to-many relationship persistent in the database
 - insertion of millions of data in the tables of the database
 - endpoint providing paginated information aggregated from the one-to-many tables in
@@ -26,7 +21,6 @@ the database
 - jmeter load testing
 - offline support on the client side. if internet or server are down and sync to the back
 end when they come back up
-Lab 4
 - login/register
 - authenticated endpoints ( using JWT tokens)
 - HTTPS communication with the backend
