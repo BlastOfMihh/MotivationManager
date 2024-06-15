@@ -6,7 +6,7 @@ This application was developed using Javascript with Angular for the frontend an
 - barcharts for an easy overview of the entities
 - UI/UX Modern User Interface
 - CRUD backend (using the SqlAlchemy ORM)
-- comprehensive tests for the back end
+- comprehensive tests for the backend
 - back end validation
 - back end pagination
 - check if the internet is down
